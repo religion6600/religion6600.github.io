@@ -1,0 +1,48 @@
+---
+title: "QDA"
+author: "Lizzie Healy"
+date: last-modified
+format:
+    html:
+        embed-resources: true
+---
+
+## Quadratic Discriminant Analysis
+
+#### Reading in the Data
+```{python}
+import pandas as pd
+
+# reading in data
+religion = pd.read_csv("../data/religion_data_no99.csv")
+
+print(religion.head(5))
+
+# getting the x and y variables
+
+```
+
+#### Preprocessing
+```{python}
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+# split data into test, train, validation
+X_tmp, X_test, y_tmp, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(X_tmp, y_tmp, test_size=0.2, random_state=42)
+
+# print
+print("\nTRAIN")
+print(X_train.shape)
+print(y_train.shape)
+
+print("\nVALIDATION")
+print(X_val.shape)
+print(y_val.shape)
+
+print("\nTEST")
+print(X_test.shape)
+print(y_test.shape)
+```
+
+### Performing QDA
