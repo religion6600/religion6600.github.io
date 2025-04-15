@@ -21,10 +21,10 @@ USE 'CURREL' VARIABLE FOR OUTPUT VARIABLE FOR ALL ANALYSIS
 14. Refused/uninterpretable
 
 **DELETE**:
-1. Other Christian
-2. Other world religions
-3. Other faiths
-4. Refused/uninterpretable
+1. Other Christian (40002)
+2. Other world religions (90001)
+3. Other faiths (90002)
+4. Refused/uninterpretable (900000)
 
 **SHOULD HAVE 10 RELIGIONS IN CURREL TO END WITH**
 1. Protestant
