@@ -5,31 +5,80 @@ date: last-modified
 format:
     html:
         embed-resources: true
+        toc: true
+        code-fold: true
 ---
 
-## Quadratic Discriminant Analysis
+# Quadratic Discriminant Analysis
 
-#### Reading in the Data
+## ALL CURREL CATEGORIES
+
+### Reading in the Data
 ```{python}
 import pandas as pd
+import numpy as np
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report, RocCurveDisplay
+from sklearn.preprocessing import StandardScaler, label_binarize
+from sklearn.metrics import roc_auc_score, accuracy_score
+import matplotlib.pyplot as plt
+from sklearn.utils import compute_class_weight
+from sklearn.feature_selection import VarianceThreshold
+from imblearn.over_sampling import SMOTE
+import warnings
+
+# dealing with an SkLearn deprecated warning
+warnings.filterwarnings("ignore", category=FutureWarning, module="sklearn")
 
 # reading in data
 religion = pd.read_csv("../data/religion_data_no99.csv")
 
-print(religion.head(5))
+# Christian, non-christian, unaffiliated
+grouping_map = {
+    1000: 'Protestant',
+    10000: 'Catholic',
+    20000: 'Mormon',
+    30000: 'Orthodox Christian',
+    40001: 'Jehovahs Witness',
+    40002: 'Other Christian',
+    50000: 'Jewish',
+    60000: 'Muslim',
+    70000: 'Buddhist',
+    80000: 'Hindu',
+    90001: 'Other world Religions',
+    90002: 'Other faiths',
+    100000: 'Unaffiliated'
+}
 
-# getting the x and y variables
-
+religion['CURREL_NEW'] = religion['CURREL'].map(grouping_map)
 ```
 
-#### Preprocessing
 ```{python}
+# getting the x and y variables
+X_int = religion.drop(columns=['RELTRAD', 'CURREL_NEW'])
+
+# take currel
+y = religion['CURREL_NEW']
+
+# drop some rows for y
+print(y.value_counts())
+
+# checking shapes
+print(y.shape)
+print(X_int.shape)
+```
+
+### Preprocessing
+```{python}
+# scaling X value
 scaler = StandardScaler()
-X = scaler.fit_transform(X)
+X_scaled = scaler.fit_transform(X_int)
 
 # split data into test, train, validation
-X_tmp, X_test, y_tmp, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X_tmp, y_tmp, test_size=0.2, random_state=42)
+X_tmp, X_test, y_tmp, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=6600)
+X_train, X_val, y_train, y_val = train_test_split(X_tmp, y_tmp, test_size=0.2, random_state=6600)
 
 # print
 print("\nTRAIN")
@@ -45,4 +94,443 @@ print(X_test.shape)
 print(y_test.shape)
 ```
 
-### Performing QDA
+### Dealing with the Class Imbalances
+```{python}
+# checking the imbalance
+sns.countplot(x=y)
+plt.xticks(rotation=45)
+plt.title("Class Distribution in CURREL")
+plt.show()
+
+# adding re-sampling to deal with class imabalance
+smote = SMOTE(random_state=6600)
+X_train_bal, y_train_bal = smote.fit_resample(X_train, y_train)
+```
+
+### Hyperparameter Tuning (reg_param)
+```{python}
+# initiating parameters
+best_val = 0
+opt_reg = None
+val_scores = {}
+reg_params = [0.0, 0.05, 0.1, 0.2, 0.5, 0.9]
+
+for r in reg_params:
+    qda_model = QuadraticDiscriminantAnalysis(reg_param=0.2)
+    qda_model.fit(X_train_bal, y_train_bal)
+
+    # getting the predictions
+    y_val_pred = qda_model.predict(X_val)
+    val_score = accuracy_score(y_val, y_val_pred)
+    val_scores[r] = val_score
+
+    # updating best reg value
+    if val_score > best_val:
+        best_val = val_score
+        opt_reg = r
+
+print("\nOptimal reg_param:", opt_reg)
+print("Validation accuracy:", best_val)
+
+# plotting
+plt.plot(val_scores.keys(), val_scores.values(), marker='o')
+plt.title("Validation Accuracy vs reg_param")
+plt.xlabel("reg_param")
+plt.ylabel("Validation Accuracy")
+plt.grid(True)
+plt.show()
+```
+
+### Fitting the Model
+```{python}
+opt_reg = 0.2
+qda_model = QuadraticDiscriminantAnalysis(reg_param=opt_reg) # iniating QDA
+qda_model.fit(X_train_bal, y_train_bal)
+
+# getting the predictions
+y_train_pred = qda_model.predict(X_train)
+y_test_pred = qda_model.predict(X_test)
+y_val_pred = qda_model.predict(X_val)
+```
+
+### Visualizing Results
+```{python}
+# classification report
+print("CLASSIFICATION REPORT:")
+print(classification_report(y_test, y_test_pred, zero_division=0))
+print(accuracy_score(y_test, y_test_pred))
+print("-----------------------")
+
+# confusion matrix
+print("CONFUSION MATRIX:")
+print(confusion_matrix(y_test, y_test_pred))
+print("-----------------------")
+
+# ROC curve
+print("ROC CURVES:")
+classes = qda_model.classes_ # getting classes
+y_score = qda_model.predict_proba(X_test) # predictions
+y_onehot = label_binarize(y_test, classes=classes)
+for i, label in enumerate(classes): # plotting ROC for all classes of digits
+    auc = roc_auc_score(y_onehot[:, i], y_score[:, i])
+    display = RocCurveDisplay.from_predictions( # ROC
+        y_true=y_onehot[:, i],
+        y_pred=y_score[:, i],
+        name=f"Religion {label} vs the rest",
+        color="darkorange",
+        plot_chance_level=True,
+        despine=True,
+        )
+    _ = display.ax_.set(
+        xlabel="False Positive Rate",
+        ylabel="True Positive Rate"
+    )
+plt.show()
+```
+
+## CHRISTIAN VS NON-CHRISTIAN VS UNAFFILIATED
+
+### Reading in the Data
+```{python}
+# reading in data
+religion = pd.read_csv("../data/religion_full_currel.csv")
+```
+
+### Dealing with Class Imbalance
+```{python}
+# visualizing imbalance
+y = religion['CURREL']
+sns.countplot(x=y)
+plt.xticks(rotation=45)
+plt.title("Class Distribution in CURREL")
+plt.show()
+
+# dropping refused 
+religion = religion[religion['CURREL'] != 900000]
+
+# Christian, non-christian, unaffiliated
+grouping_map = {
+    1000: 'Christian',
+    10000: 'Christian',
+    20000: 'Christian',
+    30000: 'Christian',
+    40001: 'Christian',
+    40002: 'Christian',
+    50000: 'Non-Christian',
+    60000: 'Non-Christian',
+    70000: 'Non-Christian',
+    80000: 'Non-Christian',
+    90001: 'Non-Christian',
+    90002: 'Non-Christian',
+    100000: 'Unaffiliated'
+}
+
+religion['CURREL_NEW'] = religion['CURREL'].map(grouping_map)
+```
+
+```{python}
+# getting the x and y variables
+X_int = religion.drop(columns=['RELTRAD', 'CURREL_NEW'])
+
+# take currel
+y = religion['CURREL_NEW']
+
+# drop some rows for y
+print(y.value_counts())
+
+# checking shapes
+print(y.shape)
+print(X_int.shape)
+```
+
+### Preprocessing
+```{python}
+# scaling X value
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_int)
+
+# split data into test, train, validation
+X_tmp, X_test, y_tmp, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=6600)
+X_train, X_val, y_train, y_val = train_test_split(X_tmp, y_tmp, test_size=0.2, random_state=6600)
+
+# print
+print("\nTRAIN")
+print(X_train.shape)
+print(y_train.shape)
+
+print("\nVALIDATION")
+print(X_val.shape)
+print(y_val.shape)
+
+print("\nTEST")
+print(X_test.shape)
+print(y_test.shape)
+```
+
+### Dealing with the Class Imbalances
+```{python}
+# checking the imbalance
+sns.countplot(x=y)
+plt.xticks(rotation=45)
+plt.title("Class Distribution in CURREL")
+plt.show()
+
+# adding re-sampling to deal with class imabalance
+smote = SMOTE(random_state=6600)
+X_train_bal, y_train_bal = smote.fit_resample(X_train, y_train)
+```
+
+### Hyperparameter Tuning (reg_param)
+```{python}
+# initiating parameters
+best_val = 0
+opt_reg = None
+val_scores = {}
+reg_params = [0.0, 0.05, 0.1, 0.2, 0.5, 0.9]
+
+for r in reg_params:
+    qda_model = QuadraticDiscriminantAnalysis(reg_param=0.2)
+    qda_model.fit(X_train_bal, y_train_bal)
+
+    # getting the predictions
+    y_val_pred = qda_model.predict(X_val)
+    val_score = accuracy_score(y_val, y_val_pred)
+    val_scores[r] = val_score
+
+    # updating best reg value
+    if val_score > best_val:
+        best_val = val_score
+        opt_reg = r
+
+print("\nOptimal reg_param:", opt_reg)
+print("Validation accuracy:", best_val)
+
+# plotting
+plt.plot(val_scores.keys(), val_scores.values(), marker='o')
+plt.title("Validation Accuracy vs reg_param")
+plt.xlabel("reg_param")
+plt.ylabel("Validation Accuracy")
+plt.grid(True)
+plt.show()
+```
+
+### Fitting the Model
+```{python}
+opt_reg = 0.2
+qda_model = QuadraticDiscriminantAnalysis(reg_param=opt_reg) # iniating QDA
+qda_model.fit(X_train_bal, y_train_bal)
+
+# getting the predictions
+y_train_pred = qda_model.predict(X_train)
+y_test_pred = qda_model.predict(X_test)
+y_val_pred = qda_model.predict(X_val)
+```
+
+### Visualizing Results
+```{python}
+# classification report
+print("CLASSIFICATION REPORT:")
+print(classification_report(y_test, y_test_pred, zero_division=0))
+print(accuracy_score(y_test, y_test_pred))
+print("-----------------------")
+
+# confusion matrix
+print("CONFUSION MATRIX:")
+print(confusion_matrix(y_test, y_test_pred))
+print("-----------------------")
+
+# ROC curve
+print("ROC CURVES:")
+classes = qda_model.classes_ # getting classes
+y_score = qda_model.predict_proba(X_test) # predictions
+y_onehot = label_binarize(y_test, classes=classes)
+for i, label in enumerate(classes): # plotting ROC for all classes of digits
+    auc = roc_auc_score(y_onehot[:, i], y_score[:, i])
+    display = RocCurveDisplay.from_predictions( # ROC
+        y_true=y_onehot[:, i],
+        y_pred=y_score[:, i],
+        name=f"Religion {label} vs the rest",
+        color="darkorange",
+        plot_chance_level=True,
+        despine=True,
+        )
+    _ = display.ax_.set(
+        xlabel="False Positive Rate",
+        ylabel="True Positive Rate"
+    )
+plt.show()
+```
+
+
+## PROTESTANT, CATHOLIC, MORMON, CHRISTIAN, JEWISH, MUSLIM, OTHER, UNAFFALIATED
+
+### Reading in the Data
+```{python}
+# reading in data
+religion = pd.read_csv("../data/religion_full_currel.csv")
+```
+
+### Dealing with Class Imbalance
+```{python}
+# visualizing imbalance
+y = religion['CURREL']
+sns.countplot(x=y)
+plt.xticks(rotation=45)
+plt.title("Class Distribution in CURREL")
+plt.show()
+
+# dropping refused 
+religion = religion[religion['CURREL'] != 900000]
+
+# Christian, non-christian, unaffiliated
+grouping_map = {
+    1000: 'Protestant',
+    10000: 'Catholic',
+    20000: 'Mormon',
+    30000: 'Christian',
+    40001: 'Christian',
+    40002: 'Christian',
+    50000: 'Jewish',
+    60000: 'Muslim',
+    70000: 'Other Religion',
+    80000: 'Other Religion',
+    90001: 'Other Religion',
+    90002: 'Other Religion',
+    100000: 'Unaffiliated'
+}
+
+religion['CURREL_NEW'] = religion['CURREL'].map(grouping_map)
+```
+
+```{python}
+# getting the x and y variables
+X_int = religion.drop(columns=['RELTRAD', 'CURREL_NEW'])
+
+# take currel
+y = religion['CURREL_NEW']
+
+# drop some rows for y
+print(y.value_counts())
+
+# checking shapes
+print(y.shape)
+print(X_int.shape)
+```
+
+### Preprocessing
+```{python}
+# scaling X value
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_int)
+
+# split data into test, train, validation
+X_tmp, X_test, y_tmp, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=6600)
+X_train, X_val, y_train, y_val = train_test_split(X_tmp, y_tmp, test_size=0.2, random_state=6600)
+
+# print
+print("\nTRAIN")
+print(X_train.shape)
+print(y_train.shape)
+
+print("\nVALIDATION")
+print(X_val.shape)
+print(y_val.shape)
+
+print("\nTEST")
+print(X_test.shape)
+print(y_test.shape)
+```
+
+### Dealing with the Class Imbalances
+```{python}
+# checking the imbalance
+sns.countplot(x=y)
+plt.xticks(rotation=45)
+plt.title("Class Distribution in CURREL")
+plt.show()
+
+# adding re-sampling to deal with class imabalance
+smote = SMOTE(random_state=6600)
+X_train_bal, y_train_bal = smote.fit_resample(X_train, y_train)
+```
+
+### Hyperparameter Tuning (reg_param)
+```{python}
+# initiating parameters
+best_val = 0
+opt_reg = None
+val_scores = {}
+reg_params = [0.0, 0.05, 0.1, 0.2, 0.5, 0.9]
+
+for r in reg_params:
+    qda_model = QuadraticDiscriminantAnalysis(reg_param=0.2)
+    qda_model.fit(X_train_bal, y_train_bal)
+
+    # getting the predictions
+    y_val_pred = qda_model.predict(X_val)
+    val_score = accuracy_score(y_val, y_val_pred)
+    val_scores[r] = val_score
+
+    # updating best reg value
+    if val_score > best_val:
+        best_val = val_score
+        opt_reg = r
+
+print("\nOptimal reg_param:", opt_reg)
+print("Validation accuracy:", best_val)
+
+# plotting
+plt.plot(val_scores.keys(), val_scores.values(), marker='o')
+plt.title("Validation Accuracy vs reg_param")
+plt.xlabel("reg_param")
+plt.ylabel("Validation Accuracy")
+plt.grid(True)
+plt.show()
+```
+
+### Fitting the Model
+```{python}
+opt_reg = 0.2
+qda_model = QuadraticDiscriminantAnalysis(reg_param=opt_reg) # iniating QDA
+qda_model.fit(X_train_bal, y_train_bal)
+
+# getting the predictions
+y_train_pred = qda_model.predict(X_train)
+y_test_pred = qda_model.predict(X_test)
+y_val_pred = qda_model.predict(X_val)
+```
+
+### Visualizing Results
+```{python}
+# classification report
+print("CLASSIFICATION REPORT:")
+print(classification_report(y_test, y_test_pred, zero_division=0))
+print(accuracy_score(y_test, y_test_pred))
+print("-----------------------")
+
+# confusion matrix
+print("CONFUSION MATRIX:")
+print(confusion_matrix(y_test, y_test_pred))
+print("-----------------------")
+
+# ROC curve
+print("ROC CURVES:")
+classes = qda_model.classes_ # getting classes
+y_score = qda_model.predict_proba(X_test) # predictions
+y_onehot = label_binarize(y_test, classes=classes)
+for i, label in enumerate(classes): # plotting ROC for all classes of digits
+    auc = roc_auc_score(y_onehot[:, i], y_score[:, i])
+    display = RocCurveDisplay.from_predictions( # ROC
+        y_true=y_onehot[:, i],
+        y_pred=y_score[:, i],
+        name=f"Religion {label} vs the rest",
+        color="darkorange",
+        plot_chance_level=True,
+        despine=True,
+        )
+    _ = display.ax_.set(
+        xlabel="False Positive Rate",
+        ylabel="True Positive Rate"
+    )
+plt.show()
+```
