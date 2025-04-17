@@ -3,8 +3,10 @@ title: "Clustering Analysis"
 format:
     html:
         embed-resources: true
+code-fold: true
 ---
 
+# Best Subset Selection Features
 ```{python}
 import pandas as pd
 from sklearn.cluster import KMeans
@@ -16,25 +18,80 @@ from sklearn.metrics import silhouette_score
 ```
 
 ```{python}
-df = pd.read_csv("../data/religion_data.csv")
+df = pd.read_csv("../data/religion_data_no99.csv")
 df.head()
 ```
 
 ## Selecting Relevant Features 
+
+```{python}
+
+# Reload original DataFrame if it's been modified
+df = pd.read_csv("../data/religion_data_no99.csv")
+
+# from Best subset selection in mlp.ipynb
+best_feature_indices = [0, 7, 8, 10, 11, 13, 14, 16, 17, 19, 21, 22, 24, 25, 26, 27, 29, 30, 32, 33, 35, 36, 37, 38, 44, 47, 50, 53, 54, 57, 60, 62, 63, 64, 65, 70, 71, 74, 75, 77, 80, 81, 82, 83, 85, 86, 88, 90, 91, 92]
+
+# Convert to list of column names from index positions
+selected_names = [df.columns[i] for i in best_feature_indices if i < len(df.columns)]
+print(selected_names)
+
+```
 ```{python}
 features = [
-    'CHNG_C',        # Views on transgender people
-    'DIVRELPOP',     # Diversity of religion in society
-    'DIVRACPOP',     # Diversity of race in society
-    'QB2A', 'QB2C', 'QB2D',  # Values: homosexuality, environment, right/wrong
-    'OPENIDEN', 'POORASSIST', 'GOVSIZE1',
-    'ABRTLGL', 'GAYMARR',  # Abortion & gay marriage
-    'CLIM1A', 'EVOL',      # Climate & evolution
-    'GUIDE_B', 'GUIDE_C', 'GUIDE_D',  # Logic, science, common sense
-    'MARITAL', 'CHILDREN', 'GENDER', 'BIRTHDECADE',
-    'EDUCREC', 'EMPLSIT', 'USGEN', 'REG', 'PARTY', 'IDEO',
-    'HH1REC', 'INTFREQ', 'INC_SDT1'
+    "HAPPY",
+    "DIVRACPOP",
+    "QB2A",
+    "QB2D",
+    "OPENIDEN",
+    "GOVSIZE1",
+    "ABRTLGL",
+    "PAR2CHILD",
+    "EVOL",
+    "GUIDE_B",
+    "GUIDE_D",
+    # "RELTRAD",
+    "RELPER",
+    "SPIRPER",
+    "ATTNDPERRLS",
+    "ATTNDONRLS",
+    "MEMB",
+    "GOD",
+    "HLL",
+    "SOUL",
+    "PRAY",
+    "GRACE",
+    "PRAC_A",
+    "PRAC_B",
+    "EXP_D",
+    "EXP_G",
+    "SPIRACT_C",
+    "SPIRACT_F",
+    "RTRT",
+    "SCIMPACT",
+    "SPIRWORLD2",
+    "SECBEL2",
+    "CHIMPREL_A",
+    "CHIMPREL_B",
+    "CHATTEND",
+    "GTHGHT",
+    "MARITAL",
+    "RELINST_B",
+    "RELINST_D",
+    "RELINST_F",
+    "SCPRY2",
+    "RELDISP",
+    "CHRNAT",
+    "BIRTHDECADE",
+    "RACECMB",
+    "AFROHISP",
+    "E2",
+    "USGEN",
+    "YEARLOCREC",
+    "MOVED",
 ]
+
+
 
 ```
 
@@ -43,17 +100,20 @@ features = [
 We applied KMeans clustering to a set of respondents using a range of non-religious socio-political and demographic features, including views on gender and sexuality, political ideology, education, income, attitudes toward science and government, and more. The goal was to determine whether individuals naturally group into distinct sociocultural profiles — and to assess how those profiles correspond (if at all) with religious tradition (RELTRAD).
 
 ### Optimal # of CLusters
-First we attempted to find optimal`k` with elbow method but it's not exactly clear, possible `k=5`. 
+Optimal`k` with elbow method is `k=6`. 
 
 ```{python}
-X = df[features].dropna()  # Drop rows with missing values
+X = df[features].dropna()  # Drop missing values
+df_clean = df.loc[X.index]  # Preserve indices
 
-# Keep original indices to map back religion
-df_clean = df.loc[X.index]
+# One-hot encode relevant categorical features
+categorical_cols = ["MARITAL", "BIRTHDECADE", "RACECMB", "AFROHISP", "E2"]
+X = pd.get_dummies(X, columns=categorical_cols, drop_first=True)
 
 # Scale features
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
+
 
 # Elbow Method to choose k
 wcss = []
@@ -62,7 +122,7 @@ for i in range(2, 10):
     kmeans.fit(X_scaled)
     wcss.append(kmeans.inertia_)
 
-plt.plot(range(2, 10), wcss, marker='o')
+plt.plot(range(2, 10), wcss, marker="o")
 plt.title("Elbow Method for Optimal k")
 plt.xlabel("Number of clusters")
 plt.ylabel("WCSS")
@@ -133,19 +193,25 @@ plt.tight_layout()
 plt.show()
 ```
 
-**Cluster 0:** Traditionalist-Conservative Profile
-- Lower support for abortion access, gay marriage, and transgender rights
-- Lower scores on science-based decision-making and belief in evolution
-- More traditional views on family, gender, and government roles
-- Slightly lower educational attainment and income
-- Politically more conservative on average
 
-**Cluster 1:** Progressive-Secular Profile
-- Significantly higher support for LGBTQ+ rights, abortion, and climate action
-- Stronger emphasis on scientific reasoning, logic, and evolution acceptance
-- Higher average education and income levels
-- More likely to be politically liberal or Democratic
-- More urban and socially inclusive profile
+**Cluster 0: Religiously Committed & Socially Conservative**
+
+- **Higher religiosity overall**: Greater belief in God, prayer frequency, belief in heaven/hell/soul, and spiritual practices.
+- **Higher scores on religious engagement**: Includes membership, religious experiences (`SPIRPER`, `RELPER`), and institutional religion variables like `ATTNDPERRLS`, `CHATTEND`, and `RELINST_*`.
+- **Stronger traditional values**: More conservative responses on family, moral values (`QB2D`), and government size (`GOVSIZE1`).
+- **Higher activity in spiritual life**: Notable scores on ritual participation (`PRAC_A`, `PRAC_B`, `SPIRACT_*`, `RTRT`).
+- **Slightly older, more racially homogeneous** (e.g., lower `AFROHISP`, `RACECMB`) and more stable (e.g., `YEARLOCREC`, `MOVED`).
+- **Likely to represent a culturally conservative, institutionally religious profile**.
+
+**Cluster 1: Spiritual/Exploratory & Less Traditional**
+
+- **Less committed to institutional religion**: Lower average on formal practices and beliefs (e.g., prayer, `GOD`, `HELL`, `MEMB`).
+- **More individualistic or exploratory spiritual profile**: Still some belief in spiritual realms but weaker scores on structured practices.
+- **More supportive of progressive norms**: Slightly higher openness (`OPENIDEN`), environmental concern (`SCIMPACT`), and diversity tolerance (`DIVRACPOP`).
+- **Younger or more mobile**: Slightly lower stability markers like `YEARLOCREC` and `MOVED`.
+- **More religiously disaffiliated**: Possibly includes unaffiliated, non-religious, or "spiritual but not religious" individuals.
+- **Slightly more racially/ethnically diverse**, higher score on `AFROHISP`, `RACECMB`.
+
 
 ***RELTRAD Distribution per Cluster**
 ```{python}
@@ -183,16 +249,85 @@ plt.show()
 
 #### Conclusions: 
 
-- Most major religious traditions (Evangelical, Catholic, Mainline Protestant) are evenly distributed across clusters.
-- This suggests **that religious identity alone does not strongly predict worldview orientation.**
-- For example, ~23% of both clusters are Evangelical Protestants, despite vast differences in cultural values.
-- The Religiously Unaffiliated group is overrepresented in Cluster 0, the "Traditionalist" cluster.
-- This is a bit counterintuitive — and likely reflects the diversity within the unaffiliated group, which includes atheists, agnostics, spiritual-but-not-religious individuals, and culturally non-religious people with differing values.
-- Cluster 1 includes relatively higher proportions of religious minorities and smaller groups (e.g., Hindu, Muslim, Buddhist), but numbers are small in both.
-- People of the same religion — particularly large groups like Evangelicals, Catholics, and the Unaffiliated — are found in both clusters, **revealing intra-religious ideological diversity.**
+- **Cluster 0** is dominated by the **Religiously Unaffiliated** — over half of the group identifies this way.  
+  - This aligns with a **spiritual but less institutionally religious** profile.
+  - It also includes a moderate share of **Mainline Protestants** and **Catholics**, reflecting a more progressive or moderate religious expression.
 
-## `K = 5`
-Now we will use `k=5` to capture more nuanced sociopoltiical differences and possible capture differences between the two subgroups.
+- **Cluster 1** is **more religiously committed overall**.  
+  - It’s heavily made up of **Evangelical Protestants**, **Catholics**, and **Historically Black Protestants**.
+  - These groups are more closely tied to **institutional religious identity and traditional social values**.
+
+- While all major traditions (e.g., Protestant, Catholic) span both clusters, the **subgroup differences matter**:  
+  - **Evangelicals and Black Protestants** are much more prominent in Cluster 1.  
+  - **Mainline Protestants** are more present in Cluster 0, suggesting a more **moderate or progressive religious identity**.
+
+- So, while religion correlates with worldview, it's not the tradition label alone — it's the **type of affiliation and how it's practiced** that drives clustering.  
+  - This reveals **intra-religious diversity**: people in the same tradition don’t always share the same values or sociopolitical orientation.
+
+- **Key Insight**: The strong presence of the unaffiliated in Cluster 0 — paired with ideological diversity within religious groups — highlights the divide between **formal religiosity** and **personal spirituality or cultural religion**.
+
+
+***CURREL Distribution per Cluster**
+```{python}
+# Map CURREL codes to readable labels
+currel_labels = {
+    1000: "Protestant",
+    10000: "Catholic",
+    20000: "Mormon",
+    30000: "Orthodox Christian",
+    40001: "Jehovah's Witness",
+    40002: "Other Christian",
+    50000: "Jewish",
+    60000: "Muslim",
+    70000: "Buddhist",
+    80000: "Hindu",
+    90001: "Other world religions",
+    90002: "Other faiths",
+    100000: "Religiously unaffiliated",
+    900000: "Refused/uninterpretable"
+}
+
+# Apply label mapping
+df_clean['CURREL_label'] = df_clean['CURREL'].map(currel_labels)
+
+# Optional: exclude ambiguous categories
+excluded_currel = ["Refused/uninterpretable", "Other Christian", "Other world religions", "Other faiths"]
+df_clean_currel = df_clean[~df_clean['CURREL_label'].isin(excluded_currel)]
+
+# Create normalized crosstab
+ct_currel = pd.crosstab(df_clean_currel['cluster'], df_clean_currel['CURREL_label'], normalize='index')
+
+# Plot
+ct_currel.plot(kind='bar', stacked=True, figsize=(14, 7), colormap='tab20')
+plt.title("CURREL Distribution by Cluster (k=2)")
+plt.xlabel("Cluster")
+plt.ylabel("Proportion")
+plt.legend(title="Current Religion", bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.tight_layout()
+plt.show()
+
+```
+
+
+#### Conclusions:
+
+- **Cluster 0** is **dominated by the Religiously Unaffiliated**, who make up the majority of this group.  
+  - This tracks with the earlier finding that Cluster 0 reflects a **less institutionally religious, more spiritual or secular** population.
+  - The remaining respondents include **Catholics** and a small mix of minority traditions (e.g., Buddhist, Jewish), suggesting a more religiously diverse but less traditionally religious cluster overall.
+
+- **Cluster 1** is **strongly Protestant** — over half of the group identifies as Protestant when using the broad CURREL label.  
+  - It also includes a sizable share of **Catholics**, making this a clearly **more traditionally religious** group.
+  - Minority traditions are represented here as well, but in smaller numbers.
+
+- Compared to RELTRAD, CURREL's broader categorization **masks important differences** within Protestantism.  
+  - Where RELTRAD distinguished between Evangelical, Mainline, and Black Protestant subgroups, CURREL collapses them — which **exaggerates the religious vs. secular divide**.
+
+- **Key Insight**: Using CURREL simplifies the religious landscape into a sharper contrast between **Protestant (Cluster 1)** and **Unaffiliated (Cluster 0)** —  
+  but at the cost of losing the **ideological diversity within those large traditions** that RELTRAD reveals.
+
+
+## `K = 6`
+Now we will use `k=6` to capture more nuanced sociopoltiical differences and possible capture differences between the two subgroups.
 
 ```{python}
 kmeans_5 = KMeans(n_clusters=5, random_state=42)
@@ -211,6 +346,10 @@ plt.tight_layout()
 plt.show()
 ```
 
+```{python}
+pd.crosstab(df_clean['cluster'], df_clean['CURREL'])
+```
+
 **Cluster profiles by feature (Standardized Average)**
 ```{python}
 cluster_profiles_5 = df_clean.groupby('cluster_5')[features].mean().T
@@ -224,52 +363,57 @@ plt.show()
 
 ```
 
+**Cluster 0 (Green-teal)**  
+This group tends to be slightly more moderate or mixed overall.  
 
-### Cluster 0 (Green-teal)
-**Moderate baseline across most features, with:**
-- Low to moderate support for LGBTQ+ rights (`CHNG_C`), gay marriage (`GAYMARR`), and abortion access (`ABRTLGL`)
-- Lower belief in science-based reasoning (`EVOL`, `GUIDE_D`), but not the lowest
-- Slightly lower education (`EDUCREC`) and income (`INC_SDT1`)
-- Lower openness (`OPENIDEN`) and acceptance of diversity (`DIVRELPOP`, `DIVRACPOP`)
+- Moderate scores on most sociopolitical and religious indicators  
+- Average levels of belief, practice, and spirituality  
+- Somewhat lower education and income  
+- Less ideologically extreme compared to others
 
-*This cluster reflects a modestly traditional group with relatively lower political or social engagement. They may represent lower-income individuals with mixed or centrist values.*
+*This cluster may represent a blend of individuals with mixed traditional and secular tendencies, possibly more centrist or disengaged.*
 
----
+**Cluster 1 (Blue)**  
+This is the most consistently progressive cluster.  
 
-**Cluster 1 (Blue)**: Strongly progressive values, including:
+- High support for LGBTQ+ rights, abortion, and diversity  
+- Strong belief in evolution and scientific reasoning (`GUIDE_B`, `GUIDE_D`)  
+- Politically liberal, Democratic-leaning  
+- High education and income  
+- Low religiosity and traditional markers
 
-- High support for LGBTQ+ rights, abortion, and social inclusion
-- Elevated belief in evolution and use of science in decision-making (`EVOL`, `GUIDE_B`, `GUIDE_D`)
-- Higher liberal political orientation (`IDEO`, `PARTY`)
-- High education and income levels (`EDUCREC`, `INC_SDT1`)
-- Low support for limited government (`GOVSIZE1`), possibly favoring social programs
+*This group appears to be secular, highly educated, and socially liberal — likely young professionals or cultural progressives.*
 
-*This cluster appears to represent a progressive, well-educated population with a high level of civic engagement and trust in science.*
+**Cluster 2 (Light Green)**  
+The most religiously devout and traditional group.
 
+- Very high scores on religious beliefs (`GOD`, `HLL`, `SOUL`, `PRAY`) and practice  
+- High religiosity indicators (`MEMB`, `ATTNDONRLS`, `CHATTEND`)  
+- Lower political liberalism  
+- Lower belief in science-based reasoning  
+- Strong traditional values around family and gender roles
 
-**Cluster 2 (Light Green)**: Defined by one dominant outlier:
+*This is a classically religious conservative group with strong spiritual commitments and more traditional moral views.*
 
-- `CLIM1A` (concern about climate change) is extremely high—almost 100 on standardized scale
-- Fairly moderate or slightly progressive values across the board
+**Cluster 3 (Pink)**  
+Civic-oriented and socially engaged cluster.  
 
-*This may represent a group strongly motivated by environmental concern, though the extreme spike in one feature could also reflect a data or scaling artifact.*
+- High political participation (`IDEO`, `PARTY`), social concern, and group involvement  
+- Strong on science indicators and pro-social values  
+- Moderate to high religiosity, but more practice than strict belief  
+- High openness and diversity acceptance
 
-**Cluster 3 (Orange)**: Marked by very high civic and socioeconomic engagement
+*This group is civically involved and socially inclusive — possibly religious moderates who are socially progressive.*
 
-- Strong scores on political participation (`PARTY`, `IDEO`), education (`EDUCREC`), income (`INC_SDT1`), internet use (`INTFREQ`), and household size (`HH1REC`)
-- Also high on science-related features (`EVOL`, `GUIDE_B/C/D`)
-- High support for LGBTQ+ rights, abortion, and openness
+**Cluster 4 (Purple-gray)**  
+A spiritually-inclined but skeptical or questioning cluster.  
 
-*This cluster likely represents high-income, highly educated individuals with strong progressive values. Potentially urban, young professionals or politically active elites.*
+- Lower institutional religiosity, but moderate levels of spiritual activity (`SPIRACT`, `SPIRPER`)  
+- High scores on existential openness (e.g., `SOUL`, `GRACE`)  
+- Less trust in organized religion  
+- More individualistic or exploratory in values
 
-**Cluster 4 (Gray)**: Distinct for strong traditional and conservative indicators. 
-
-- Preference for smaller government (`GOVSIZE1`)
-- Low openness (`OPENIDEN`), low scientific reliance (`GUIDE_D`), and low diversity tolerance
-- Traditional family values: higher scores on `CHILDREN`, `GENDER`, `MARITAL`
-- Lower political liberalism (`IDEO`, `PARTY`)
-
-*This cluster likely reflects a socially conservative population with strong emphasis on family, tradition, and limited government. Trust in science and progressive norms is relatively low.*
+*This may reflect the “spiritual but not religious” demographic — interested in meaning and morality but detached from institutions.*
 
 
 ***RELTRAD Distribution per Cluster**
@@ -290,10 +434,542 @@ plt.show()
 
 ```
 
-- **Cluster 0**: Mixed religious background with a **high share of unaffiliated**. Likely a moderately secular group.
-- **Cluster 1**: **Heavily Evangelical Protestant**. Strongly religious and likely more traditional.
-- **Cluster 2**: **Balanced mix** — Catholic, Protestant, and unaffiliated all present. Moderate religious diversity.
-- **Cluster 3**: **Mostly unaffiliated**. Reflects a **highly secular, progressive** group.
-- **Cluster 4**: Dominated by **Evangelical Protestants**, with some Catholic and Mainline. Likely **socially conservative**.
+#### Conclusions 
 
-In short, **Clusters 1 and 4** skew religious/traditional, while **Cluster 3** is clearly secular. Clusters 0 and 2 fall somewhere in between.
+- **Cluster 0**: Predominantly made up of **Historically Black Protestants**, with secondary representation from **Evangelical Protestants** and **Catholics**.  
+  - This cluster likely represents a **traditionally religious group**, potentially with strong communal or institutional religious ties.
+  - Despite the Evangelical share, it is not dominated by unaffiliated individuals like some other clusters.
+
+- **Cluster 1**: **Heavily Evangelical Protestant**.  
+  - The proportion of Evangelicals is the largest of any cluster, with smaller shares from other traditions.
+  - This likely reflects a **socially conservative**, **religiously committed** group, in line with Evangelical affiliation.
+
+- **Cluster 2**: Overwhelmingly **Religiously Unaffiliated**.  
+  - This cluster has the **highest concentration of unaffiliated individuals**, with minimal representation from traditional religious groups.
+  - It strongly suggests a **secular or spiritually independent profile**, potentially linked to non-institutional values and ideologies.
+
+- **Cluster 3**: Diverse mix — large shares of **Catholics**, **Mainline Protestants**, and **Evangelicals**.  
+  - This balanced representation points to **moderate religiosity** or **pluralistic orientation**.
+  - It may reflect those who identify with a religion but are less ideologically extreme or institutionally embedded.
+
+- **Cluster 4**: High representation of the **Religiously Unaffiliated**, but with meaningful portions of **Mainline Protestants** and **Catholics**.  
+  - This blend implies a **semi-secular group** that may combine religious identity with more progressive or individualized belief systems.
+
+**Summary Insight**:
+- Clusters **1 and 0** lean most strongly toward **institutional religiosity**, especially with Evangelical and Historically Black Protestant affiliations.
+- **Cluster 2** is the most clearly **secular**, dominated by the unaffiliated.
+- **Clusters 3 and 4** fall in the middle, combining **moderate religious identity** with **some degree of secularization or pluralism**.
+
+This distribution further reinforces the idea that **religious identity and worldview are not one-to-one** — even highly religious groups like Evangelicals appear across clusters, but their dominant presence in one cluster signals **ideological clustering within religion itself**.
+
+
+***CURREL Distribution per Cluster**
+
+```{python}
+kmeans_5 = KMeans(n_clusters=5, random_state=42)
+df_clean['cluster_5'] = kmeans_5.fit_predict(X_scaled)
+df_clean_currel = df_clean[~df_clean['CURREL_label'].isin(excluded_currel)]
+
+
+ct_currel_5 = pd.crosstab(df_clean_currel['cluster_5'], df_clean_currel['CURREL_label'], normalize='index')
+
+# Plot the stacked bar chart
+ct_currel_5.plot(kind='bar', stacked=True, figsize=(14, 7), colormap='tab20')
+plt.title("CURREL Distribution by Cluster (k=5)")
+plt.xlabel("Cluster")
+plt.ylabel("Proportion")
+plt.legend(title="Current Religion", bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.tight_layout()
+plt.show()
+```
+
+#### Conclusions
+
+- **Cluster 2** is by far the most **secular cluster**, with the **Religiously Unaffiliated** making up nearly the entire group.
+  - This aligns with the RELTRAD distribution for this cluster, confirming a consistently non-religious identity.
+
+- **Clusters 0 and 3** show a **strong Protestant majority**, which is much more pronounced under CURREL than in RELTRAD.
+  - This reflects how collapsing Protestant subgroups (Evangelical, Mainline, Black Protestant) into a single label **masks important ideological variation** seen in RELTRAD.
+  - These clusters also contain a modest share of Catholics and religious minorities.
+
+- **Cluster 1**, while also Protestant-heavy, includes a notable presence of **Mormon**, **Muslim**, and **Catholic** identifiers — giving it a more **institutionally religious and theologically diverse** makeup than others.
+
+- **Cluster 4** reflects a more mixed composition, with moderate shares of both **Protestants and the Unaffiliated**, plus some **Jewish** and **Catholic** identifiers — suggesting a **less clearly polarized** religious identity.
+
+
+**Key Insight**:
+- **RELTRAD** and **CURREL** tell subtly different stories.  
+  - CURREL simplifies religious identity into broad categories, exaggerating the Protestant/Unaffiliated split.  
+  - RELTRAD captures **within-group diversity** — showing that, for example, not all Protestants cluster the same way.
+
+So while “religion” as a single label might feel like a strong predictor, it’s really the **granularity of religious identification** that matters in understanding sociopolitical alignment.
+
+
+
+# Category Specific Features
+
+## Political
+
+```{python}
+political_features = ["GOVSIZE1", "IDEO", "PARTY", "POORASSIST"]
+X = df[political_features].dropna()
+df_subset = df.loc[X.index]
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Silhouette to find best k
+sil_scores = []
+K_range = range(2, 10)
+for k in K_range:
+    labels = KMeans(n_clusters=k, random_state=42).fit_predict(X_scaled)
+    sil_scores.append(silhouette_score(X_scaled, labels))
+
+# Final clustering
+best_k = K_range[sil_scores.index(max(sil_scores))]
+cluster_labels = KMeans(n_clusters=best_k, random_state=42).fit_predict(X_scaled)
+df_subset["cluster"] = cluster_labels
+
+# PCA scatter
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+df_subset["pca1"], df_subset["pca2"] = X_pca[:, 0], X_pca[:, 1]
+
+plt.figure(figsize=(7, 6))
+sns.scatterplot(data=df_subset, x="pca1", y="pca2", hue="cluster", palette="Set2")
+plt.title(f"PCA Clustering - Political Features (k={best_k})")
+plt.legend(title="Cluster")
+plt.tight_layout()
+plt.show()
+
+# Cluster feature averages
+cluster_means = df_subset.groupby("cluster")[political_features].mean().T
+cluster_means.columns = [f"Cluster {i}" for i in cluster_means.columns]
+cluster_means.plot(kind="bar", figsize=(10, 5), colormap="Set2")
+plt.title("Cluster Feature Averages - Political")
+plt.ylabel("Standardized Mean")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# RELTRAD distribution
+df_subset["RELTRAD_label"] = df_subset["RELTRAD"].map(reltrad_labels)
+pd.crosstab(df_subset["cluster"], df_subset["RELTRAD_label"], normalize="index")\
+  .plot(kind="bar", stacked=True, figsize=(12, 6), colormap="tab20")
+plt.title("RELTRAD by Cluster - Political Features")
+plt.ylabel("Proportion")
+plt.xlabel("Cluster")
+plt.legend(title="Religious Tradition", bbox_to_anchor=(1.05, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+# CURREL distribution
+df_subset["CURREL_label"] = df_subset["CURREL"].map(currel_labels)
+df_subset_currel = df_subset[~df_subset["CURREL_label"].isin([
+    "Other Christian", "Other world religions", "Other faiths", "Refused/uninterpretable"
+])]
+pd.crosstab(df_subset_currel["cluster"], df_subset_currel["CURREL_label"], normalize="index")\
+  .plot(kind="bar", stacked=True, figsize=(12, 6), colormap="tab20")
+plt.title("CURREL by Cluster - Political Features")
+plt.ylabel("Proportion")
+plt.xlabel("Cluster")
+plt.legend(title="Current Religion", bbox_to_anchor=(1.05, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+```
+
+### Conclusion
+
+**Political Cluster Interpretation (k=4)**
+
+- **Cluster 0**: Politically moderate-progressive. Mid-to-high on government support for the poor and more liberal (`IDEO`, `PARTY`), but slightly lower on trust in large government (`GOVSIZE1`).
+
+- **Cluster 1**: More conservative. Scores lower on liberal ideology, party identification, and assistance programs. Tends toward traditionalist values.
+
+- **Cluster 2**: Highly liberal-progressive cluster. Very high scores on political ideology (`IDEO`) and party affiliation, strong support for government aid.
+
+- **Cluster 3**: Politically disengaged or centrist. Lowest scores across the board — could reflect apolitical or ideologically neutral individuals.
+
+**RELTRAD & CURREL Distributions:**
+
+- Cluster 2 (liberal) has the largest share of **religiously unaffiliated**.
+- Cluster 1 (conservative) is **dominated by Evangelical Protestants**.
+- Cluster 0 and 3 are more mixed, with **Mainline Protestants and Catholics** appearing across both.
+- CURREL confirms this: Protestants are concentrated in Cluster 1, while Cluster 2 shows more unaffiliated.
+
+**Key Insight**: Political identity is tightly tied to religious affiliation in this dataset — Evangelicals cluster together conservatively, while the unaffiliated and Mainline Protestants show more liberal leanings.
+
+
+## Religious Practice
+```{python}
+practice_features = [
+    "ATTNDPERRLS", "ATTNDONRLS", "PRAY", "MEMB", "CHATTEND", 
+    "RELINST_B", "RELINST_D", "RELINST_F", "PRAC_A", "PRAC_B", "GRACE"
+]
+
+X = df[practice_features].dropna()
+df_subset = df.loc[X.index]
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Select best k using silhouette score (no plot)
+sil_scores = []
+K_range = range(2, 10)
+for k in K_range:
+    labels = KMeans(n_clusters=k, random_state=42).fit_predict(X_scaled)
+    sil_scores.append(silhouette_score(X_scaled, labels))
+
+best_k = K_range[sil_scores.index(max(sil_scores))]
+cluster_labels = KMeans(n_clusters=best_k, random_state=42).fit_predict(X_scaled)
+df_subset["cluster"] = cluster_labels
+
+# PCA scatter
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+df_subset["pca1"], df_subset["pca2"] = X_pca[:, 0], X_pca[:, 1]
+
+plt.figure(figsize=(7, 6))
+sns.scatterplot(data=df_subset, x="pca1", y="pca2", hue="cluster", palette="Set2")
+plt.title(f"PCA Clustering - Religious Practice (k={best_k})")
+plt.legend(title="Cluster")
+plt.tight_layout()
+plt.show()
+
+# Cluster feature averages
+cluster_means = df_subset.groupby("cluster")[practice_features].mean().T
+cluster_means.columns = [f"Cluster {i}" for i in cluster_means.columns]
+cluster_means.plot(kind="bar", figsize=(10, 5), colormap="Set2")
+plt.title("Cluster Feature Averages - Religious Practice")
+plt.ylabel("Standardized Mean")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# RELTRAD bar
+df_subset["RELTRAD_label"] = df_subset["RELTRAD"].map(reltrad_labels)
+pd.crosstab(df_subset["cluster"], df_subset["RELTRAD_label"], normalize="index")\
+  .plot(kind="bar", stacked=True, figsize=(12, 6), colormap="tab20")
+plt.title("RELTRAD by Cluster - Religious Practice")
+plt.ylabel("Proportion")
+plt.xlabel("Cluster")
+plt.legend(title="Religious Tradition", bbox_to_anchor=(1.05, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+# CURREL bar
+df_subset["CURREL_label"] = df_subset["CURREL"].map(currel_labels)
+df_subset_currel = df_subset[~df_subset["CURREL_label"].isin([
+    "Other Christian", "Other world religions", "Other faiths", "Refused/uninterpretable"
+])]
+pd.crosstab(df_subset_currel["cluster"], df_subset_currel["CURREL_label"], normalize="index")\
+  .plot(kind="bar", stacked=True, figsize=(12, 6), colormap="tab20")
+plt.title("CURREL by Cluster - Religious Practice")
+plt.ylabel("Proportion")
+plt.xlabel("Cluster")
+plt.legend(title="Current Religion", bbox_to_anchor=(1.05, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+```
+
+### Conclusions
+
+**Religious Practice Clustering (k=2)**
+
+- **Cluster 0** represents individuals with high levels of religious practice.
+  - These respondents report frequent attendance at religious services (`ATTNDPERRLS`, `ATTNDONRLS`) and higher frequency of prayer (`PRAY`).
+  - They also report higher membership in religious organizations (`MEMB`) and greater participation in religious rituals or expressions (`PRAC_A`, `PRAC_B`, `GRACE`).
+
+- **Cluster 1** consists of individuals with generally lower levels of formal religious participation and practice.
+  - Scores across all variables are consistently lower, suggesting less institutional involvement and personal religious activity.
+
+**RELTRAD** distribution:
+- Cluster 0 includes a large share of the **Religiously Unaffiliated**, along with Catholics and Mainline Protestants.
+- Cluster 1 is strongly dominated by **Evangelical Protestants**, with additional presence from Historically Black Protestants and Catholics.
+- The divide aligns closely with levels of religious participation — more frequent participation tracks with Evangelical identity.
+
+**CURREL** distribution:
+- Cluster 0 is more secular overall — **Religiously Unaffiliated** make up the largest single group.
+- Cluster 1 is overwhelmingly **Protestant**, suggesting that current affiliation with a religious tradition correlates strongly with higher levels of religious engagement.
+
+These clusters show a clear division between **institutionally religious individuals** (Cluster 1) and **those who are less religiously active or unaffiliated** (Cluster 0).
+
+
+## Spiritual Practice 
+```{python}
+spiritual_features = [
+    "PRAY", "GRACE", "PRAC_A", "PRAC_B", "EXP_D", "EXP_G", "SPIRACT_C",
+    "SPIRACT_F", "RTRT", "SCIMPACT", "SPIRWORLD2", "SECBEL2"
+]
+
+X = df[spiritual_features].dropna()
+df_subset = df.loc[X.index]
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Best k by silhouette (no plot shown)
+sil_scores = []
+K_range = range(2, 10)
+for k in K_range:
+    labels = KMeans(n_clusters=k, random_state=42).fit_predict(X_scaled)
+    sil_scores.append(silhouette_score(X_scaled, labels))
+
+best_k = K_range[sil_scores.index(max(sil_scores))]
+cluster_labels = KMeans(n_clusters=best_k, random_state=42).fit_predict(X_scaled)
+df_subset["cluster"] = cluster_labels
+
+# PCA scatter
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+df_subset["pca1"], df_subset["pca2"] = X_pca[:, 0], X_pca[:, 1]
+
+plt.figure(figsize=(7, 6))
+sns.scatterplot(data=df_subset, x="pca1", y="pca2", hue="cluster", palette="Set2")
+plt.title(f"PCA Clustering - Spiritual Practice (k={best_k})")
+plt.legend(title="Cluster")
+plt.tight_layout()
+plt.show()
+
+# Cluster means plot
+cluster_means = df_subset.groupby("cluster")[spiritual_features].mean().T
+cluster_means.columns = [f"Cluster {i}" for i in cluster_means.columns]
+cluster_means.plot(kind="bar", figsize=(12, 5), colormap="Set2")
+plt.title("Cluster Feature Averages - Spiritual Practice")
+plt.ylabel("Standardized Mean")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# RELTRAD distribution
+df_subset["RELTRAD_label"] = df_subset["RELTRAD"].map(reltrad_labels)
+pd.crosstab(df_subset["cluster"], df_subset["RELTRAD_label"], normalize="index")\
+  .plot(kind="bar", stacked=True, figsize=(12, 6), colormap="tab20")
+plt.title("RELTRAD by Cluster - Spiritual Practice")
+plt.ylabel("Proportion")
+plt.xlabel("Cluster")
+plt.legend(title="Religious Tradition", bbox_to_anchor=(1.05, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+# CURREL distribution
+df_subset["CURREL_label"] = df_subset["CURREL"].map(currel_labels)
+df_subset_currel = df_subset[~df_subset["CURREL_label"].isin([
+    "Other Christian", "Other world religions", "Other faiths", "Refused/uninterpretable"
+])]
+pd.crosstab(df_subset_currel["cluster"], df_subset_currel["CURREL_label"], normalize="index")\
+  .plot(kind="bar", stacked=True, figsize=(12, 6), colormap="tab20")
+plt.title("CURREL by Cluster - Spiritual Practice")
+plt.ylabel("Proportion")
+plt.xlabel("Cluster")
+plt.legend(title="Current Religion", bbox_to_anchor=(1.05, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+```
+
+### Conclusions
+
+**Cluster 0**  
+- Demonstrates **high engagement** in spiritual activities:  
+  - Frequent prayer (`PRAY`), grace before meals (`GRACE`), and both formal and informal religious practice (`PRAC_A`, `PRAC_B`)  
+  - Strong spiritual experiences and activities (`EXP_D`, `EXP_G`, `SPIRACT_C`, `SPIRACT_F`)  
+  - Elevated retreat attendance (`RTRT`)  
+- **Surprisingly**, this spiritually active group is **dominated by the religiously unaffiliated** — especially in both `RELTRAD` and `CURREL`.
+  - That is, many in this cluster do not identify with a formal religion, but still engage deeply in spiritual behavior.
+
+**Cluster 1**  
+- Displays **lower but still present levels** of spiritual activity:  
+  - Less ritual participation and fewer experiential indicators  
+- Compositionally, this cluster is made up of **more traditionally affiliated individuals** — especially **Evangelical Protestants** and **Catholics**, as shown in both religion variables.
+
+This clustering flips common assumptions: **the most spiritually active group is not the most traditionally affiliated**. In fact, **those who identify as religiously unaffiliated dominate the high-engagement cluster** — similar to what was observed in **religious practice clustering**, where Cluster 0 also showed **both high practice levels and high unaffiliated rates**.
+
+Behavioral measures of spirituality (like prayer or retreat attendance) are not tightly bound to religious labels. Many "unaffiliated" individuals are **deeply engaged** in practice, while some traditionally affiliated groups show more nominal participation.  
+
+This **mirrors the pattern** seen in **religious practice clustering**, reinforcing the idea that **spiritual action and religious identity are increasingly decoupled** in contemporary contexts.
+
+
+## Demographics
+
+```{python}
+demo_features = [
+    "BIRTHDECADE", "RACECMB", "AFROHISP", "E2", "USGEN", "YEARLOCREC", "MOVED", "MARITAL"
+]
+
+X = df[demo_features].dropna()
+df_subset = df.loc[X.index]
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Best k by silhouette (no plot)
+sil_scores = []
+K_range = range(2, 10)
+for k in K_range:
+    labels = KMeans(n_clusters=k, random_state=42).fit_predict(X_scaled)
+    sil_scores.append(silhouette_score(X_scaled, labels))
+
+best_k = K_range[sil_scores.index(max(sil_scores))]
+cluster_labels = KMeans(n_clusters=best_k, random_state=42).fit_predict(X_scaled)
+df_subset["cluster"] = cluster_labels
+
+# PCA plot
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+df_subset["pca1"], df_subset["pca2"] = X_pca[:, 0], X_pca[:, 1]
+
+plt.figure(figsize=(7, 6))
+sns.scatterplot(data=df_subset, x="pca1", y="pca2", hue="cluster", palette="Set2")
+plt.title(f"PCA Clustering - Demographics (k={best_k})")
+plt.legend(title="Cluster")
+plt.tight_layout()
+plt.show()
+
+# Cluster feature averages
+cluster_means = df_subset.groupby("cluster")[demo_features].mean().T
+cluster_means.columns = [f"Cluster {i}" for i in cluster_means.columns]
+cluster_means.plot(kind="bar", figsize=(10, 5), colormap="Set2")
+plt.title("Cluster Feature Averages - Demographics")
+plt.ylabel("Standardized Mean")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# RELTRAD bar
+df_subset["RELTRAD_label"] = df_subset["RELTRAD"].map(reltrad_labels)
+pd.crosstab(df_subset["cluster"], df_subset["RELTRAD_label"], normalize="index")\
+  .plot(kind="bar", stacked=True, figsize=(12, 6), colormap="tab20")
+plt.title("RELTRAD by Cluster - Demographics")
+plt.ylabel("Proportion")
+plt.xlabel("Cluster")
+plt.legend(title="Religious Tradition", bbox_to_anchor=(1.05, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+# CURREL bar
+df_subset["CURREL_label"] = df_subset["CURREL"].map(currel_labels)
+df_subset_currel = df_subset[~df_subset["CURREL_label"].isin([
+    "Other Christian", "Other world religions", "Other faiths", "Refused/uninterpretable"
+])]
+pd.crosstab(df_subset_currel["cluster"], df_subset_currel["CURREL_label"], normalize="index")\
+  .plot(kind="bar", stacked=True, figsize=(12, 6), colormap="tab20")
+plt.title("CURREL by Cluster - Demographics")
+plt.ylabel("Proportion")
+plt.xlabel("Cluster")
+plt.legend(title="Current Religion", bbox_to_anchor=(1.05, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+```
+
+### Conclusion 
+### Demographic Clusters
+
+**Cluster 0** consists of individuals who are generally **younger**, more racially and ethnically diverse (`RACECMB`, `AFROHISP`), and more mobile (`MOVED`). They are slightly more likely to be unmarried and less rooted in their current community.
+
+**Cluster 1**, in contrast, is **older**, more likely to be white, and more often married. They also report more geographic stability and higher likelihood of U.S. nativity (`USGEN`), indicating a more settled and possibly traditional demographic profile.
+
+From a religious identity perspective:
+
+- **Cluster 0** includes a broad religious mix with higher representation of the **religiously unaffiliated**, along with notable shares of **Mainline Protestants** and **Evangelicals**.
+- **Cluster 1** leans slightly more **Catholic** and **Evangelical**, with lower unaffiliated representation compared to Cluster 0.
+
+In terms of **CURREL**, this same trend is visible: Cluster 0 leans more secular, while Cluster 1 shows greater **Protestant and Catholic affiliation**.
+
+While these demographic clusters reflect meaningful variation in age, race, and stability, the **religious differences between them are not as stark** as those seen in clusters based on religious practice or values. This suggests that **demographics alone don't strongly segment religious worldview**, but they may help shape predispositions.
+
+## Science Worldview
+
+```{python}
+science_features = [
+    "EVOL", "GUIDE_B", "GUIDE_D", "GTHGHT", "SCPRY2", "RELDISP"
+]
+
+X = df[science_features].dropna()
+df_subset = df.loc[X.index]
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Best silhouette-based k
+sil_scores = []
+K_range = range(2, 10)
+for k in K_range:
+    labels = KMeans(n_clusters=k, random_state=42).fit_predict(X_scaled)
+    sil_scores.append(silhouette_score(X_scaled, labels))
+
+best_k = K_range[sil_scores.index(max(sil_scores))]
+cluster_labels = KMeans(n_clusters=best_k, random_state=42).fit_predict(X_scaled)
+df_subset["cluster"] = cluster_labels
+
+# PCA plot
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+df_subset["pca1"], df_subset["pca2"] = X_pca[:, 0], X_pca[:, 1]
+
+plt.figure(figsize=(7, 6))
+sns.scatterplot(data=df_subset, x="pca1", y="pca2", hue="cluster", palette="Set2")
+plt.title(f"PCA Clustering - Science & Worldview (k={best_k})")
+plt.legend(title="Cluster")
+plt.tight_layout()
+plt.show()
+
+# Cluster feature averages
+cluster_means = df_subset.groupby("cluster")[science_features].mean().T
+cluster_means.columns = [f"Cluster {i}" for i in cluster_means.columns]
+cluster_means.plot(kind="bar", figsize=(10, 5), colormap="Set2")
+plt.title("Cluster Feature Averages - Science & Worldview")
+plt.ylabel("Standardized Mean")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# RELTRAD breakdown
+df_subset["RELTRAD_label"] = df_subset["RELTRAD"].map(reltrad_labels)
+pd.crosstab(df_subset["cluster"], df_subset["RELTRAD_label"], normalize="index")\
+  .plot(kind="bar", stacked=True, figsize=(12, 6), colormap="tab20")
+plt.title("RELTRAD by Cluster - Science & Worldview")
+plt.ylabel("Proportion")
+plt.xlabel("Cluster")
+plt.legend(title="Religious Tradition", bbox_to_anchor=(1.05, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+# CURREL breakdown
+df_subset["CURREL_label"] = df_subset["CURREL"].map(currel_labels)
+df_subset_currel = df_subset[~df_subset["CURREL_label"].isin([
+    "Other Christian", "Other world religions", "Other faiths", "Refused/uninterpretable"
+])]
+pd.crosstab(df_subset_currel["cluster"], df_subset_currel["CURREL_label"], normalize="index")\
+  .plot(kind="bar", stacked=True, figsize=(12, 6), colormap="tab20")
+plt.title("CURREL by Cluster - Science & Worldview")
+plt.ylabel("Proportion")
+plt.xlabel("Cluster")
+plt.legend(title="Current Religion", bbox_to_anchor=(1.05, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+
+```
+
+### Conclusion
+
+### Science & Worldview Clustering (k=2)
+
+Cluster differences on science and metaphysical worldview are present but **less stark** than in domains like religious practice.
+
+- **Cluster 0** shows **greater belief in evolution** and scientific reasoning (e.g., higher means on `EVOL`, `GUIDE_B`, `GUIDE_D`). 
+  - However, their scores on items like `RELIDISP` (religious distrust of science) are relatively neutral, not fully secular.
+  - Compositionally, this cluster includes **more religiously affiliated individuals**, particularly **Evangelical Protestants** and **Catholics**.
+
+- **Cluster 1**, in contrast, expresses **stronger spiritual openness** and **lower traditional religiosity**.
+  - High scores on `GTHGHT` (sense of purpose) and `SCPRY2` (spiritual practices), combined with lower evolution endorsement, suggest a more **spiritual-but-not-scientific** orientation.
+  - Religiously, this cluster is **dominated by the Unaffiliated**, though there's also a presence of Mainline Protestants and religious minorities.
+
+- Across both RELTRAD and CURREL:
+  - **Cluster 1 has a much larger share of the Religiously Unaffiliated**, while
+  - **Cluster 0 includes more Protestants and Catholics**.
+
+These clusters suggest that **worldview-based divisions are real but less polarized** than in direct measures of belief or religious practice. The relationship between science, purpose, and belief appears more complex — possibly shaped by culture, identity, and education as much as formal religion.
