@@ -1079,3 +1079,29 @@ for i, label in enumerate(classes): # plotting ROC for all classes of digits
     )
 plt.show()
 ```
+
+## Final Results Summary
+
+**Full Currel**:
+- overall accuracy: 0.72
+- weighted f-1: 0.74
+
+**Christian vs Non vs Unaffaliated**:
+- overall accuracy: 0.89
+- weighted f-1: 0.90
+
+**More Categories**:
+- overall accuracy: 0.68
+- weighted f-1: 0.71
+
+**Full Currel w Features**:
+- overall accuracy: 0.66
+- weighted f-1: 0.71
+
+**Christian vs Non vs Unaffaliated w Features**:
+- overall accuracy: 0.91
+- weighted f-1: 0.91
+
+**More Categories w Features**:
+- overall accuracy: 0.65
+- weighted f-1: 0.69
