@@ -18,7 +18,7 @@ While this work is mainly done for the purposes of creating a report and not cod
      a. python "code/clustering.qmd"\
      b. python "code/QDA.qmd"\
      c. python "code/MLP.ipynb"\
-     d. python "code/transformer_13_classes.qmd"\
+     d. python "code/transformer_13_classes.qmd"
   5. View the output produced or utilized the trained models for further usage.
 It is also possible to view the output of these files without running them within the docs/code folder where you will find rendered versions of each of the workflows. 
 
