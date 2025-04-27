@@ -15,10 +15,10 @@ While this work is mainly done for the purposes of creating a report and not cod
   2. Install the required packages
   3. Download the Pew Research Center dataset (https://www.pewresearch.org/dataset/2023-24-religious-landscape-study-rls-dataset/)
   4. Run the main machine learning algorithm scripts located in the code folder
-     a. python "code/clustering.qmd"
-     b. python "code/QDA.qmd"
-     c. python "code/MLP.ipynb"
-     d. python "code/transformer_13_classes.qmd"
+     a. python "code/clustering.qmd"\
+     b. python "code/QDA.qmd"\
+     c. python "code/MLP.ipynb"\
+     d. python "code/transformer_13_classes.qmd"\
   5. View the output produced or utilized the trained models for further usage.
 It is also possible to view the output of these files without running them within the docs/code folder where you will find rendered versions of each of the workflows. 
 
@@ -30,9 +30,9 @@ While our project was primarily an academic and personal exploration of knowledg
   4. Marketing Strategies: Understand how to advertise to specific relgious groups based on their beliefs and practices.
 
 ## Project Structure
-/code/: code files for clustering, QDA, MLP, and transformer models
-/docs/: rendered version of the code files
-/docs/code/: clustering, QDA, MLP, transformer rendered output
+/code/: code files for clustering, QDA, MLP, and transformer models\
+/docs/: rendered version of the code files\
+/docs/code/: clustering, QDA, MLP, transformer rendered output\
 /README: project overview
 
 ## Abstract 
