@@ -1,6 +1,5 @@
 ---
 title: "QDA"
-author: "Lizzie Healy"
 date: last-modified
 format:
     html:
