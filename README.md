@@ -1,9 +1,9 @@
-# religion6600
+# Decoding the Divine: Religious Affiliation Prediction using Multiple Model Approaches
 DSAN6600 Project Group #4
+Sophia Rutman, Courtney Green, Lizzie Healy, Caroline Delva
 
-<<<<<<< HEAD
-- describe the project’s purpose,
-- setup instructions
-- usage examples
-  
-Provide instructions for running and testing the code.
+## Purpose
+
+## Set-up Instructions
+
+## Usage Examples
