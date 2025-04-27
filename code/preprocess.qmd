@@ -5,31 +5,39 @@ format:
         embed-resources: true
 ---
 
-## RELIGIOUS DATA
+## Preprocessing the Religious Survey Data
 ```{python}
 import pandas as pd
 import missingno as msno
 import matplotlib.pyplot as plt
 ```
 
+#### Reading in the File
 ```{python}
 # reading in the file
-religion = pd.read_csv("./data/2023-24-Religious-Landscape-Study-Dataset-Public-Use-File/2023-24 RLS Public Use File Feb 19.csv")
+religion = pd.read_csv("../data/2023-24-Religious-Landscape-Study-Dataset-Public-Use-File/2023-24 RLS Public Use File Feb 19.csv")
 ```
 
+#### Understanding the Data
 ```{python}
 # number of observations
 print("-----------------")
 print("DATA SHAPE:")
 print(religion.shape)
+```
 
+#### Dropping Variables
+```{python}
 # remove the restricted value
 religion = religion.loc[:, religion.isnull().sum() != 36908]
 
 # droppping the weight variables and year
 religion = religion.loc[:, ~religion.columns.str.startswith('REPWT_')]
 religion = religion.drop(columns=['WEIGHT', 'YEAR_FROM_CODATE'])
+```
 
+#### Dealing with Missing Values
+```{python}
 # understanding missing values
 print("-----------------")
 print("MISSING VALUES:")
@@ -51,7 +59,10 @@ for column in religion_nona.columns:
   count_greater_15 = (religion_nona[column] == 99).sum()
   if count_greater_15 > 0:
     print(f"{column}: {count_greater_15}")
+```
 
+#### Dealing with Refused Responses
+```{python}
 # seeing how many 77
 print("-----------------")
 print("VARIABLES WITH 77 RESPONSES:")
@@ -72,12 +83,6 @@ for column in religion_nona.columns:
 # delete any row with 99
 religion_nona99 = religion_nona[(religion_nona != 99).all(axis=1)]
 
-# # all variables
-# print("-----------------")
-# print("ALL VARIABLE NAMES:")
-# for column in religion_nona.columns:
-#   print(column)
-
 # final check for missing/anamolies
 print("-----------------")
 print("CHECK FOR ISSUES:")
@@ -85,7 +90,11 @@ for column in religion_nona99.columns:
   count_greater_15 = (religion_nona99[column] > 15).sum()
   if count_greater_15 > 0:
     print(f"{column}: {count_greater_15}")
+```
 
+
+#### Final Check of Dataset
+```{python}
 # dropping climate question and religion raised in:
 # dropping ID number
 religion_nona99 = religion_nona99.drop(columns=['CLIM1A', 'FRMREL', 'P_SUID'])
@@ -116,18 +125,15 @@ print("FINAL NUMBER OF VARIABLES:", religion_nona99.shape[1])
 print("-----------------")
 
 # saving the dataset
-religion_nona99.to_csv("./data/religion_data_no99.csv", index=False)
+religion_nona99.to_csv("../data/religion_data_no99.csv", index=False)
 ```
 
-**IDEAS FOR NEURAL NETWORK**
-
-**Outcome**: currel/reltrad (current religion or religious tradition) 
+**Outcome Variables**: currel/reltrad (current religion or religious tradition) 
     already broken into categories
 
 **Type**: Multi-Class Classification 
 
-**Main Variables**:
-
+**Main Predictor Variables**:
 - health/happiness/family life
 - views on political/societal topics
 - views on evolution/science/climate change
