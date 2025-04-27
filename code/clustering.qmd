@@ -333,22 +333,22 @@ plt.show()
   but at the cost of losing the **ideological diversity within those large traditions** that RELTRAD reveals.
 
 
-## `K = 6`
-Now we will use `k=6` to capture more nuanced sociopoltiical differences and possible capture differences between the two subgroups.
+## `K = 5`
+Now we will use `k=5` to capture more nuanced sociopoltiical differences and possible capture differences between the two subgroups.
 
 ```{python}
 kmeans_5 = KMeans(n_clusters=5, random_state=42)
-df_clean['cluster_5'] = kmeans_5.fit_predict(X_scaled)
+df_clean["cluster_5"] = kmeans_5.fit_predict(X_scaled)
 
 pca = PCA(n_components=2)
 X_pca = pca.fit_transform(X_scaled)
-df_clean['pca1'] = X_pca[:, 0]
-df_clean['pca2'] = X_pca[:, 1]
+df_clean["pca1"] = X_pca[:, 0]
+df_clean["pca2"] = X_pca[:, 1]
 
 plt.figure(figsize=(8, 6))
-sns.scatterplot(data=df_clean, x='pca1', y='pca2', hue='cluster_5', palette='Set2')
+sns.scatterplot(data=df_clean, x="pca1", y="pca2", hue="cluster_5", palette="Set2")
 plt.title("KMeans Clustering with k=5 (PCA-reduced)")
-plt.legend(title='Cluster')
+plt.legend(title="Cluster")
 plt.tight_layout()
 plt.show()
 ```
