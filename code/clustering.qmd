@@ -284,25 +284,32 @@ currel_labels = {
     90001: "Other world religions",
     90002: "Other faiths",
     100000: "Religiously unaffiliated",
-    900000: "Refused/uninterpretable"
+    900000: "Refused/uninterpretable",
 }
 
 # Apply label mapping
-df_clean['CURREL_label'] = df_clean['CURREL'].map(currel_labels)
+df_clean["CURREL_label"] = df_clean["CURREL"].map(currel_labels)
 
 # Optional: exclude ambiguous categories
-excluded_currel = ["Refused/uninterpretable", "Other Christian", "Other world religions", "Other faiths"]
-df_clean_currel = df_clean[~df_clean['CURREL_label'].isin(excluded_currel)]
+excluded_currel = [
+    "Refused/uninterpretable",
+    "Other Christian",
+    "Other world religions",
+    "Other faiths",
+]
+df_clean_currel = df_clean[~df_clean["CURREL_label"].isin(excluded_currel)]
 
 # Create normalized crosstab
-ct_currel = pd.crosstab(df_clean_currel['cluster'], df_clean_currel['CURREL_label'], normalize='index')
+ct_currel = pd.crosstab(
+    df_clean_currel["cluster"], df_clean_currel["CURREL_label"], normalize="index"
+)
 
 # Plot
-ct_currel.plot(kind='bar', stacked=True, figsize=(14, 7), colormap='tab20')
+ct_currel.plot(kind="bar", stacked=True, figsize=(14, 7), colormap="tab20")
 plt.title("CURREL Distribution by Cluster (k=2)")
 plt.xlabel("Cluster")
 plt.ylabel("Proportion")
-plt.legend(title="Current Religion", bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.legend(title="Current Religion", bbox_to_anchor=(1.05, 1), loc="upper left")
 plt.tight_layout()
 plt.show()
 

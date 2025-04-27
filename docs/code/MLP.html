@@ -4816,7 +4816,7 @@ vertical-align: -.125em;
 
 
 <p>Import the dependencies</p>
-<div id="cell-3" class="cell" data-execution_count="1">
+<div id="cell-3" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow <span class="im">import</span> keras</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf  </span>
@@ -4847,10 +4847,10 @@ vertical-align: -.125em;
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Import and split the data</p>
-<div id="cell-5" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>religion_data <span class="op">=</span> pd.read_csv(<span class="st">&#39;../preprocessing/data/religion_data_no99.csv&#39;</span>)</span>
+<div id="cell-5" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>religion_data <span class="op">=</span> pd.read_csv(<span class="st">&#39;../data/religion_data_no99.csv&#39;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>religion_data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="17">
 <div>
 
 
@@ -5009,17 +5009,17 @@ vertical-align: -.125em;
 </div>
 </div>
 </div>
-<div id="cell-6" class="cell" data-execution_count="3">
+<div id="cell-6" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df_clean <span class="op">=</span> religion_data.drop(columns<span class="op">=</span>[<span class="st">&#39;RELTRAD&#39;</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-7" class="cell" data-execution_count="4">
+<div id="cell-7" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df_clean[<span class="st">&#39;CURREL&#39;</span>].unique()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="19">
 <pre><code>array([  1000, 100000,  10000,  30000,  50000,  20000,  40001,  80000,
         70000,  60000])</code></pre>
 </div>
 </div>
-<div id="cell-8" class="cell" data-execution_count="5">
+<div id="cell-8" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df_clean <span class="op">=</span> religion_data.drop(columns<span class="op">=</span>[<span class="st">&#39;CURREL&#39;</span>])</span>
@@ -5042,7 +5042,7 @@ X_test:  (2177, 99),  y_test:  (2177,)</code></pre>
 </div>
 <section id="pre-processing" class="level2">
 <h2 class="anchored" data-anchor-id="pre-processing">Pre-processing</h2>
-<div id="cell-10" class="cell" data-execution_count="6">
+<div id="cell-10" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> scaler.fit_transform(X_train)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>X_val <span class="op">=</span> scaler.transform(X_val)</span>
@@ -5052,179 +5052,240 @@ X_test:  (2177, 99),  y_test:  (2177,)</code></pre>
 <section id="feature-selection" class="level2">
 <h2 class="anchored" data-anchor-id="feature-selection">Feature Selection</h2>
 <p>Stepwise Feature Selection</p>
-<div id="cell-13" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>rf <span class="op">=</span> RandomForestClassifier(random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>sfs <span class="op">=</span> SFS(rf,k_features<span class="op">=</span><span class="dv">50</span>, forward<span class="op">=</span><span class="va">True</span>, floating<span class="op">=</span><span class="va">True</span>, scoring<span class="op">=</span><span class="st">&#39;accuracy&#39;</span>, cv<span class="op">=</span>StratifiedKFold(n_splits<span class="op">=</span><span class="dv">3</span>), n_jobs<span class="op">=-</span><span class="dv">1</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>sfs.fit(X_train, y_train)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>selected_features <span class="op">=</span> <span class="bu">list</span>(sfs.k_feature_idx_)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>X_train_selected <span class="op">=</span> X_train[:, selected_features]</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> cross_val_score(rf, X_train_selected, y_train, cv<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Stepwise-selected </span><span class="sc">{</span><span class="bu">len</span>(selected_features)<span class="sc">}</span><span class="ss"> features: Accuracy = </span><span class="sc">{</span>np<span class="sc">.</span>mean(scores)<span class="sc">:.4f}</span><span class="ss">&quot;</span>)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Trying with stepwise</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-13" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> StratifiedKFold, cross_val_score</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mlxtend.feature_selection <span class="im">import</span> SequentialFeatureSelector <span class="im">as</span> SFS</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>stepwise_rf <span class="op">=</span> RandomForestClassifier(random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>stepwise_selector <span class="op">=</span> SFS(</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    stepwise_rf,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    k_features<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    forward<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    floating<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    scoring<span class="op">=</span><span class="st">&#39;accuracy&#39;</span>,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span>StratifiedKFold(n_splits<span class="op">=</span><span class="dv">3</span>),</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    n_jobs<span class="op">=-</span><span class="dv">1</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>stepwise_selector.fit(X_train, y_train)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>stepwise_selected_idx <span class="op">=</span> <span class="bu">list</span>(stepwise_selector.k_feature_idx_)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>stepwise_X_train <span class="op">=</span> X_train[:, stepwise_selected_idx]</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>stepwise_scores <span class="op">=</span> cross_val_score(stepwise_rf, stepwise_X_train, y_train, cv<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Stepwise-selected </span><span class="sc">{</span><span class="bu">len</span>(stepwise_selected_idx)<span class="sc">}</span><span class="ss"> features: Accuracy = </span><span class="sc">{</span>np<span class="sc">.</span>mean(stepwise_scores)<span class="sc">:.4f}</span><span class="ss">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Stepwise-selected 50 features: Accuracy = 0.6539</code></pre>
 </div>
 </div>
-<div id="cell-14" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(selected_features)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-14" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(stepwise_X_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[0, 7, 8, 10, 11, 13, 14, 16, 17, 19, 21, 22, 24, 25, 26, 27, 29, 30, 32, 33, 35, 36, 37, 38, 44, 47, 50, 53, 54, 57, 60, 62, 63, 64, 65, 70, 71, 74, 75, 77, 80, 81, 82, 83, 85, 86, 88, 90, 91, 92]</code></pre>
+<pre><code>[[-1.36903393 -0.51445703  1.66367039 ... -1.87491355 -0.39500903
+  -1.21986136]
+ [ 0.24239453 -0.51445703 -0.6010806  ... -1.87491355 -0.39500903
+  -0.16392986]
+ [ 0.24239453 -0.51445703 -0.6010806  ...  0.53335792 -0.39500903
+   0.89200163]
+ ...
+ [ 1.85382299 -0.51445703 -0.6010806  ...  0.53335792  2.53158768
+  -1.21986136]
+ [ 1.85382299  2.20975566 -0.6010806  ...  0.53335792 -0.39500903
+  -0.16392986]
+ [-1.36903393 -0.51445703 -0.6010806  ...  0.53335792 -0.39500903
+  -0.16392986]]</code></pre>
 </div>
 </div>
-<div id="cell-15" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>X_val<span class="op">=</span> X_val[:, selected_features]</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> X_test[:, selected_features]</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> X_train[:, selected_features]</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-15" class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>feature_names <span class="op">=</span> X.columns.tolist()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>selected_feature_names <span class="op">=</span> [feature_names[i] <span class="cf">for</span> i <span class="kw">in</span> stepwise_selected_idx]</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>stepwise_rf.fit(stepwise_X_train, y_train)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>importances <span class="op">=</span> stepwise_rf.feature_importances_</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>indices <span class="op">=</span> np.argsort(importances)[::<span class="op">-</span><span class="dv">1</span>][:<span class="dv">5</span>]</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>top_importances <span class="op">=</span> importances[indices]</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>top_feature_names <span class="op">=</span> [selected_feature_names[i] <span class="cf">for</span> i <span class="kw">in</span> indices]</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>plt.barh(<span class="bu">range</span>(<span class="dv">5</span>), top_importances, color<span class="op">=</span><span class="st">&#39;#3274A1&#39;</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>plt.yticks(<span class="bu">range</span>(<span class="dv">5</span>), top_feature_names)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&quot;Importance Score&quot;</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Top 5 Contributing Features&quot;</span>)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>plt.gca().invert_yaxis()  <span class="co"># Highest at top</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img role="img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAxYAAAHqCAYAAACZcdjsAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjguMCwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy81sbWrAAAACXBIWXMAAA9hAAAPYQGoP6dpAABAIklEQVR4nO3deVhV5d7/8c9m2iCTigMoCCoOOZVmOZ1Eyqky7UQ5Z6SVTZYnTTPLWTGt02yeUKHyOKUdj1rHn2Vikw2WlFNoJqWPkGYqokWo9++PHvbjFlDgZsMx36/rWtfVXuu71v1d666r/XGtvXQYY4wAAAAAwIJXZTcAAAAA4OJHsAAAAABgjWABAAAAwBrBAgAAAIA1ggUAAAAAawQLAAAAANYIFgAAAACsESwAAAAAWCNYAAAAALBGsACAMnA4HCVa0tLSPN5LTExMkWPfe++9JT7GTz/9pMcee0wtW7ZUUFCQ/P391ahRIz388MPavXu3B7uXZsyYoZUrV5Zqn9TUVDkcDmVmZrrWdenSRS1atCjX3t555x1NmjSpyG0xMTFKTEws1/FKqrg5dzgcys3N9ciYc+bMUWpqqkeODeDPwWGMMZXdBABcbD799FO3z1OnTtWGDRv0/vvvu61v1qyZQkJCPNpLTEyMIiMj9fTTT7utr127turXr3/B/T///HP16tVLxhg9+OCD6tChg/z8/JSRkaGFCxdq27ZtOnLkiKfaV1BQkG699dZSfWk9dOiQ9uzZo9atW8vpdEr6I1j8/PPP2rZtW7n19uCDD+rll19WUf+r3LJli0JCQtSwYcNyG6+kiptzSbr66qvl5VX+f27YokUL1ahRo0LCMoCLk09lNwAAF6P27du7fa5Zs6a8vLwKra8oVatWLdPYOTk56tOnj/z9/fXJJ58oMjLSta1Lly4aPny4li9fXp6tWvn111/l7++vmjVrqmbNmpXaS+vWrSt1/LLO+X+bkydPqkqVKpXdBoBywKNQAOAhv/zyi+6//37VrVtXfn5+atCggcaPH6+8vDy3OofDoQcffFD/+Mc/1LhxYzmdTjVr1kxLlizxeI/JycnKzs7WrFmz3ELF2W699Va3z6tWrVKHDh1UpUoVBQcHq1u3btq0aZNbzaRJk+RwOLR9+3YNGDBAoaGhql27toYOHapjx4656hwOh06cOKHXXnvN9ShPly5dJP3f407r1q3T0KFDVbNmTVWpUkV5eXlFPgpV4MMPP1T79u0VEBCgunXr6sknn9Tp06dd29PS0op8TC0zM1MOh8N15yQxMVEvv/yyq8+CpWDMcx+FKjju4sWLNX78eNWpU0chISHq2rWrMjIy3MYyxmjGjBmKjo6Wv7+/2rZtq3fffVddunRxnb+t7OxsDR8+XJGRkfLz81P9+vU1efJknTp1yq1u8uTJateunapXr66QkBC1adNG8+fPd7tLExMTo+3bt2vjxo2u6xATEyOp6MfSzr4eZ1/ngsfVPvjgA3Xs2FFVqlTR0KFDJf0RckePHq369evLz89PdevW1ciRI3XixAm347755ptq166dQkNDVaVKFTVo0MB1DACVizsWAOABv/32m+Lj47Vnzx5NnjxZrVq10ocffqikpCSlp6fr7bffdqtftWqVNmzYoClTpigwMFBz5szRgAED5OPjU+iLfVE++OADBQcH67ffflOjRo00bNgwjRw5Ut7e3ufdb926dfL29tZNN91UovNatGiRBg0apO7du2vx4sXKy8vTrFmz1KVLF61fv15/+ctf3OoTEhLUr18/DRs2TFu3btW4ceMkSQsWLJAkbdq0Sddee63i4+P15JNPSlKhR8eGDh2qG2+8UW+88YZOnDghX1/fYvvLzs5W//799dhjj2nKlCl6++23NW3aNB05ckQvvfRSic6xwJNPPqkTJ05o+fLlbsEpIiLivPs9/vjj6tSpk+bNm6ecnByNHTtWN910k3bu3Omaj/HjxyspKUn33HOPbrnlFu3bt0933XWX8vPz1bhx4xL1Z4wpFBK8vLzk5eWl7Oxs1yNREyZMUMOGDbVp0yZNmzZNmZmZSklJce2TmZmp4cOHq169epL+eMxvxIgR+p//+R9NmDBBkvSvf/1Lt956q0JDQzVnzhxJcj2CVlpZWVkaPHiwxowZoxkzZsjLy0snT55UXFyc9u/fr8cff1ytWrXS9u3bNWHCBG3dulXvvfeeHA6HNm3apH79+qlfv36aNGmS/P399cMPPxR6BBFAJTEAAGt33HGHCQwMdH2eO3eukWSWLVvmVvfUU08ZSWbdunWudZJMQECAyc7Odq07deqUadq0qYmNjb3g2Pfff79ZsGCB2bhxo1m5cqUZNGiQkWQGDx58wX2bNm1qwsPDS3KK5vTp06ZOnTqmZcuW5vTp0671x48fN7Vq1TIdO3Z0rZs4caKRZGbNmlWoV39/f3PmzBnXusDAQHPHHXcUGi8lJcVIMkOGDCl22969e13r4uLijCTz73//26327rvvNl5eXuaHH34wxhizYcMGI8ls2LDBrW7v3r1GkklJSXGte+CBB0xx/6uMjo5267vguDfccINb3bJly4wks2nTJmOMMb/88otxOp2mX79+bnWbNm0ykkxcXFyR4507tqRCy/jx440xxgwfPtwEBQW5zrnA008/bSSZ7du3F3nc06dPm/z8fDNlyhQTFhbmNk/Nmzcvsrei5uLs63H2dS6Yo/Xr17vVJiUlGS8vL/PFF1+4rV++fLmRZN555x23/o8ePXre6wOgcvAoFAB4wPvvv6/AwMBCdxsKHp1Zv3692/rrrrtOtWvXdn329vZWv3799N1332n//v3nHevll1/WnXfeqc6dO6tPnz5auHChHnzwQS1cuFBbtmwpnxOSlJGRoQMHDuj22293+3FwUFCQEhIS9Omnn+rkyZNu+/Tu3dvtc6tWrfTbb7/p4MGDJR43ISGhxLXBwcGFxhw4cKDOnDmjDz74oMTHsVHUOUvSDz/8IOmPOwJ5eXnq27evW1379u1djxeVxF/+8hd98cUXbsv9998vSVqzZo3i4+NVp04dnTp1yrVcf/31kqSNGze6jvP++++ra9euCg0Nlbe3t3x9fTVhwgQdPny4VPNUUtWqVdO1117rtm7NmjVq0aKFrrjiCrd+e/To4fY41VVXXSVJ6tu3r5YtW6b/+Z//Kff+AJQdwQIAPODw4cMKDw+Xw+FwW1+rVi35+Pjo8OHDbuvDw8MLHaNg3bm1JTF48GBJhd9eda569erp0KFDhZ5jL0pBH0U9ClSnTh2dOXOm0NujwsLC3D4XPD7z66+/XnC8Ahd69OhsZ4ezAjbXsSwudM4FfRTVa1HrihMaGqq2bdu6LXXq1JH0x+uDV69eLV9fX7elefPmkqSff/5Z0h9vBOvevbukP35v8/HHH+uLL77Q+PHj3XouT0XN508//aRvvvmmUL/BwcEyxrj67dy5s1auXKlTp05pyJAhioyMVIsWLbR48eJy7xNA6fEbCwDwgLCwMH322WcyxriFi4MHD+rUqVOqUaOGW312dnahYxSsO/eLakmY//3h7YVeO9qjRw+tW7dOq1evVv/+/c9bW9BHVlZWoW0HDhyQl5eXqlWrVupeL+TccHY+P/30U6F1515Hf39/SSr0I/qCL6+eVtBHcb2W5q5FcWrUqKFWrVpp+vTpRW4vCCBLliyRr6+v1qxZ47oukkr194qU9noWNZ81atRQQECA67c3RW0v0KdPH/Xp00d5eXn69NNPlZSUpIEDByomJkYdOnQocd8Ayh93LADAA6677jrl5uYW+oL2+uuvu7afbf369W5fNE+fPq2lS5eqYcOGxb6t6XwKxrnQ60iHDRum8PBwjRkzptjHSt566y1JUpMmTVS3bl0tWrTI7Y1BJ06c0IoVK1xviiotp9NZbn8yfvz4ca1atcpt3aJFi+Tl5aXOnTtLkuuL+zfffONWd+5+Bb1J5fsn9+3atZPT6dTSpUvd1n/66aeux6Vs9erVS9u2bVPDhg0L3dU4+86Gw+GQj4+P24/8f/31V73xxhuFjlncPJXmep6v3z179igsLKzIfosKW06nU3FxcXrqqackqVwf+wNQNtyxAAAPGDJkiF5++WXdcccdyszMVMuWLfXRRx9pxowZuuGGG9S1a1e3+ho1aujaa6/Vk08+6Xor1LfffnvBV84uWrRIb731lm688UZFR0fr6NGjevPNN7VkyRIlJibq8ssvP+/+oaGh+ve//61evXqpdevWbn9B3u7du7Vw4UJ9/fXXuuWWW+Tl5aVZs2Zp0KBB6tWrl4YPH668vDzNnj1bR48e1cyZM8t0rVq2bKm0tDStXr1aERERCg4OVpMmTcp0rLCwMN1333368ccf1bhxY73zzjtKTk7Wfffd53rrUXh4uLp27aqkpCRVq1ZN0dHRWr9+vStAndubJD311FO6/vrr5e3trVatWsnPz69M/UlS9erV9cgjj7jG/+tf/6r9+/dr8uTJioiIKJe/3G7KlCl699131bFjRz300ENq0qSJfvvtN2VmZuqdd97R3LlzFRkZqRtvvFF///vfNXDgQN1zzz06fPiwnn766SLf+NSyZUstWbJES5cuVYMGDeTv76+WLVvqqquuUpMmTTR69GidOnVK1apV07/+9S999NFHJe535MiRWrFihTp37qy//e1vatWqlc6cOaMff/xR69at06hRo9SuXTtNmDBB+/fv13XXXafIyEgdPXpUzz//vHx9fRUXF2d93QBYqtzfjgPAn8O5b4UyxpjDhw+be++910RE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ESwAAC6JiYm6+eabK7uNYmVmZsrhcCg9Pb2yWymRgwcPavjw4apXr56cTqfCw8PVo0cPbdq0qbJbA4By51PZDQAAUBK///57ZbdQagkJCcrPz9drr72mBg0a6KefftL69ev1yy+/eGzM33//XX5+fh47PgAUhzsWAIBidenSRSNGjNDIkSNVrVo11a5dW6+++qpOnDihO++8U8HBwWrYsKH+85//uPZJS0uTw+HQ22+/rcsvv1z+/v5q166dtm7d6nbsFStWqHnz5nI6nYqJidEzzzzjtj0mJkbTpk1TYmKiQkNDdffdd6t+/fqSpNatW8vhcKhLly6SpC+++ELdunVTjRo1FBoaqri4OH311Vdux3M4HJo3b57++te/qkqVKmrUqJFWrVrlVrN9+3bdeOONCgkJUXBwsK655hrt2bPHtT0lJUWXXXaZ/P391bRpU82ZM6fYa3f06FF99NFHeuqppxQfH6/o6GhdffXVGjdunG688Ua3unvuuUe1a9eWv7+/WrRooTVr1lhdJ0n65JNP1LlzZwUEBCgqKkoPPfSQTpw4UWy/AGDNAADwv+644w7Tp08f1+e4uDgTHBxspk6danbt2mWmTp1qvLy8zPXXX29effVVs2vXLnPfffeZsLAwc+LECWOMMRs2bDCSzGWXXWbWrVtnvvnmG9OrVy8TExNjfv/9d2OMMZs3bzZeXl5mypQpJiMjw6SkpJiAgACTkpLiGjs6OtqEhISY2bNnm927d5vdu3ebzz//3Egy7733nsnKyjKHDx82xhizfv1688Ybb5gdO3aYHTt2mGHDhpnatWubnJwc1/EkmcjISLNo0SKze/du89BDD5mgoCDXMfbv32+qV69ubrnlFvPFF1+YjIwMs2DBAvPtt98aY4x59dVXTUREhFmxYoX5/vvvzYoVK0z16tVNampqkdcyPz/fBAUFmZEjR5rffvutyJrTp0+b9u3bm+bNm5t169aZPXv2mNWrV5t33nnH6jp98803JigoyDz77LNm165d5uOPPzatW7c2iYmJpfi3AQBKh2ABAHApKlj85S9/cX0+deqUCQwMNLfffrtrXVZWlpFkNm3aZIz5v2CxZMkSV83hw4dNQECAWbp0qTHGmIEDB5pu3bq5jf3oo4+aZs2auT5HR0ebm2++2a1m7969RpLZsmXLec/j1KlTJjg42Kxevdq1TpJ54oknXJ9zc3ONw+Ew//nPf4wxxowbN87Ur1/fFX7OFRUVZRYtWuS2burUqaZDhw7F9rF8+XJTrVo14+/vbzp27GjGjRtnvv76a9f2//f//p/x8vIyGRkZRe5f1ut0++23m3vuucdt3Ycffmi8vLzMr7/+Wmy/AGCDR6EAAOfVqlUr1z97e3srLCxMLVu2dK2rXbu2pD9+qHy2Dh06uP65evXqatKkiXbu3ClJ2rlzpzp16uRW36lTJ+3evVunT592rWvbtm2Jejx48KDuvfdeNW7cWKGhoQoNDVVubq5+/PHHYs8lMDBQwcHBrr7T09N1zTXXyNfXt9DxDx06pH379mnYsGEKCgpyLdOmTXN7VOpcCQkJOnDggFatWqUePXooLS1Nbdq0UWpqqmvMyMhINW7cuMj9y3qdvvzyS6Wmprr12qNHD505c0Z79+4ttl8AsMGPtwEA53XuF22Hw+G2zuFwSJLOnDlzwWMV1BpjXP9cwBhTqD4wMLBEPSYmJurQoUN67rnnFB0dLafTqQ4dOhT6wXdR51LQd0BAQLHHL6hJTk5Wu3bt3LZ5e3uftzd/f39169ZN3bp104QJE3TXXXdp4sSJSkxMPO+YUtmv05kzZzR8+HA99NBDhWrr1at33jEBoKwIFgAAj/j0009dX2KPHDmiXbt2qWnTppKkZs2a6aOPPnKr/+STT9S4cePzflEveNvR2X9aL0kffvih5syZoxtuuEGStG/fPv3888+l6rdVq1Z67bXXlJ+fXyiA1K5dW3Xr1tX333+vQYMGleq452rWrJlWrlzpGnP//v3atWtXkXctynqd2rRpo+3btys2NtaqVwAoDR6FAgB4xJQpU7R+/Xpt27ZNiYmJqlGjhuvvyBg1apTWr1+vqVOnateuXXrttdf00ksvafTo0ec9Zq1atRQQEKC1a9fqp59+0rFjxyRJsbGxeuONN7Rz50599tlnGjRo0AXvBpzrwQcfVE5Ojvr376/Nmzdr9+7deuONN5SRkSFJmjRpkpKSkvT8889r165d2rp1q1JSUvT3v/+9yOMdPnxY1157rRYuXKhvvvlGe/fu1ZtvvqlZs2apT58+kqS4uDh17txZCQkJevfdd7V371795z//0dq1a62u09ixY7Vp0yY98MADSk9P1+7du7Vq1SqNGDGiVNcEAEqDYAEA8IiZM2fq4Ycf1pVXXqmsrCytWrXKdcehTZs2WrZsmZYsWaIWLVpowoQJmjJlihITE897TB8fH73wwgv6xz/+oTp16ri+oC9YsEBHjhxR69atdfvtt+uhhx5SrVq1StVvWFiY3n//feXm5iouLk5XXnmlkpOTXXcv7rrrLs2bN0+pqalq2bKl4uLilJqa6noF7rmCgoLUrl07Pfvss+rcubNatGihJ598UnfffbdeeuklV92KFSt01VVXacCAAWrWrJnGjBnjuiNT1uvUqlUrbdy4Ubt379Y111yj1q1b68knn1RERESprgkAlIbDFPWwJgAAZZSWlqb4+HgdOXJEVatWrex2AAAVhDsWAAAAAKwRLAAAAABY41EoAAAAANa4YwEAAADAGsECAAAAgDWCBQAAAABrBAsAAAAA1ggWAAAAAKwRLAAAAABYI1gAAAAAsEawAAAAAGCNYAEAAADA2v8H7DTfPiqeoU8AAAAASUVORK5CYII=" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-16" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X_val<span class="op">=</span> X_val[:, selected_features]</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> X_test[:, selected_features]</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> X_train[:, selected_features]</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="model-setup" class="level2">
 <h2 class="anchored" data-anchor-id="model-setup">Model setup</h2>
 <p>Create model class. This class allows the finetuning of the optimizer, the activation function, regularization and dropout.</p>
-<div id="cell-18" class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> feed_forward_model:</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, optimizer, activation_func, num_classes, regularization<span class="op">=</span><span class="va">None</span>, dropout_rate<span class="op">=</span><span class="dv">0</span>):</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model <span class="op">=</span> models.Sequential()</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        input_shape <span class="op">=</span> (X_train.shape[<span class="dv">1</span>],)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">isinstance</span>(regularization, <span class="bu">tuple</span>):</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>            reg_type, reg_strength <span class="op">=</span> regularization</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>            reg_type, reg_strength <span class="op">=</span> regularization, <span class="va">None</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        reg_strength <span class="op">=</span> <span class="bu">float</span>(reg_strength) </span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> reg_type <span class="op">==</span> <span class="st">&#39;l1&#39;</span>:</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>            kernel_reg <span class="op">=</span> regularizers.L1(reg_strength)</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> reg_type <span class="op">==</span> <span class="st">&#39;l2&#39;</span>:</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>            kernel_reg <span class="op">=</span> regularizers.L2(reg_strength)</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>            kernel_reg <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model.add(layers.Dense(<span class="dv">64</span>, activation<span class="op">=</span>activation_func, input_shape<span class="op">=</span>input_shape, kernel_regularizer<span class="op">=</span>kernel_reg))</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> dropout_rate <span class="op">&gt;</span> <span class="dv">0</span>:</span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.model.add(layers.Dropout(dropout_rate))</span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model.add(layers.Dense(<span class="dv">64</span>, activation<span class="op">=</span>activation_func))</span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> dropout_rate <span class="op">&gt;</span> <span class="dv">0</span>:</span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.model.add(layers.Dropout(dropout_rate))</span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model.add(layers.Dense(num_classes, activation<span class="op">=</span><span class="st">&#39;softmax&#39;</span>))</span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model.<span class="bu">compile</span>(optimizer<span class="op">=</span>optimizer, loss<span class="op">=</span><span class="st">&#39;sparse_categorical_crossentropy&#39;</span>, metrics<span class="op">=</span>[<span class="st">&#39;accuracy&#39;</span>])</span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> fit(<span class="va">self</span>, X_train, y_train, X_val, y_val, X_test<span class="op">=</span><span class="va">None</span>, y_test<span class="op">=</span><span class="va">None</span>, <span class="op">**</span>kwargs):</span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>        early_stopping <span class="op">=</span> EarlyStopping(monitor<span class="op">=</span><span class="st">&#39;val_loss&#39;</span>, patience<span class="op">=</span><span class="dv">10</span>, restore_best_weights<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>        history <span class="op">=</span> <span class="va">self</span>.model.fit(X_train, y_train, epochs<span class="op">=</span><span class="dv">80</span>, batch_size<span class="op">=</span><span class="dv">16</span>, validation_data<span class="op">=</span>(X_val, y_val), callbacks<span class="op">=</span>[early_stopping], </span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>                                 verbose<span class="op">=</span><span class="dv">0</span>,<span class="op">**</span>kwargs)</span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> X_test <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="kw">and</span> y_test <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>            test_loss, test_acc <span class="op">=</span> <span class="va">self</span>.model.evaluate(X_test, y_test, verbose<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&#39;Test set accuracy: </span><span class="sc">{</span>test_acc<span class="sc">:.4f}</span><span class="ss">&#39;</span>)</span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> history</span>
-<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> predict(<span class="va">self</span>, x):</span>
-<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.model.predict(x)</span>
-<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_history(<span class="va">self</span>, history):</span>
-<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>        loss_values <span class="op">=</span> history.history[<span class="st">&#39;loss&#39;</span>]</span>
-<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>        val_loss_values <span class="op">=</span> history.history[<span class="st">&#39;val_loss&#39;</span>]</span>
-<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>        epochs <span class="op">=</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(loss_values) <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>        plt.plot(epochs, loss_values, <span class="st">&#39;r&#39;</span>, label<span class="op">=</span><span class="st">&#39;Training loss&#39;</span>)</span>
-<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a>        plt.plot(epochs, val_loss_values, <span class="st">&#39;b&#39;</span>, label<span class="op">=</span><span class="st">&#39;Validation loss&#39;</span>)</span>
-<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">&#39;Training and validation loss&#39;</span>)</span>
-<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a>        plt.xlabel(<span class="st">&#39;Epochs&#39;</span>)</span>
-<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a>        plt.ylabel(<span class="st">&#39;Loss&#39;</span>)</span>
-<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a>        plt.legend()</span>
-<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_confusion_matrix(<span class="va">self</span>, x, y_true, class_labels):</span>
-<span id="cb14-64"><a href="#cb14-64" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb14-65"><a href="#cb14-65" aria-hidden="true" tabindex="-1"></a>        <span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix</span>
-<span id="cb14-66"><a href="#cb14-66" aria-hidden="true" tabindex="-1"></a>        y_pred <span class="op">=</span> <span class="va">self</span>.predict(x).argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb14-67"><a href="#cb14-67" aria-hidden="true" tabindex="-1"></a>        cm <span class="op">=</span> confusion_matrix(y_true, y_pred)</span>
-<span id="cb14-68"><a href="#cb14-68" aria-hidden="true" tabindex="-1"></a>        sns.heatmap(cm, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">&#39;d&#39;</span>, cmap<span class="op">=</span><span class="st">&#39;Blues&#39;</span>, xticklabels<span class="op">=</span>class_labels, yticklabels<span class="op">=</span>class_labels)</span>
-<span id="cb14-69"><a href="#cb14-69" aria-hidden="true" tabindex="-1"></a>        plt.xlabel(<span class="st">&quot;Predicted&quot;</span>)</span>
-<span id="cb14-70"><a href="#cb14-70" aria-hidden="true" tabindex="-1"></a>        plt.ylabel(<span class="st">&quot;True&quot;</span>)</span>
-<span id="cb14-71"><a href="#cb14-71" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">&quot;Confusion Matrix&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-19" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> feed_forward_model:</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, optimizer, activation_func, num_classes, regularization<span class="op">=</span><span class="va">None</span>, dropout_rate<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model <span class="op">=</span> models.Sequential()</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        input_shape <span class="op">=</span> (X_train.shape[<span class="dv">1</span>],)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">isinstance</span>(regularization, <span class="bu">tuple</span>):</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>            reg_type, reg_strength <span class="op">=</span> regularization</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>            reg_type, reg_strength <span class="op">=</span> regularization, <span class="va">None</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        reg_strength <span class="op">=</span> <span class="bu">float</span>(reg_strength) </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> reg_type <span class="op">==</span> <span class="st">&#39;l1&#39;</span>:</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>            kernel_reg <span class="op">=</span> regularizers.L1(reg_strength)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> reg_type <span class="op">==</span> <span class="st">&#39;l2&#39;</span>:</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>            kernel_reg <span class="op">=</span> regularizers.L2(reg_strength)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>            kernel_reg <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model.add(layers.Dense(<span class="dv">64</span>, activation<span class="op">=</span>activation_func, input_shape<span class="op">=</span>input_shape, kernel_regularizer<span class="op">=</span>kernel_reg))</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> dropout_rate <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.model.add(layers.Dropout(dropout_rate))</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model.add(layers.Dense(<span class="dv">64</span>, activation<span class="op">=</span>activation_func))</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> dropout_rate <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.model.add(layers.Dropout(dropout_rate))</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model.add(layers.Dense(num_classes, activation<span class="op">=</span><span class="st">&#39;softmax&#39;</span>))</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model.<span class="bu">compile</span>(optimizer<span class="op">=</span>optimizer, loss<span class="op">=</span><span class="st">&#39;sparse_categorical_crossentropy&#39;</span>, metrics<span class="op">=</span>[<span class="st">&#39;accuracy&#39;</span>])</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> fit(<span class="va">self</span>, X_train, y_train, X_val, y_val, X_test<span class="op">=</span><span class="va">None</span>, y_test<span class="op">=</span><span class="va">None</span>, <span class="op">**</span>kwargs):</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>        early_stopping <span class="op">=</span> EarlyStopping(monitor<span class="op">=</span><span class="st">&#39;val_loss&#39;</span>, patience<span class="op">=</span><span class="dv">10</span>, restore_best_weights<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>        history <span class="op">=</span> <span class="va">self</span>.model.fit(X_train, y_train, epochs<span class="op">=</span><span class="dv">80</span>, batch_size<span class="op">=</span><span class="dv">16</span>, validation_data<span class="op">=</span>(X_val, y_val), callbacks<span class="op">=</span>[early_stopping], </span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>                                 verbose<span class="op">=</span><span class="dv">0</span>,<span class="op">**</span>kwargs)</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> X_test <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="kw">and</span> y_test <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>            test_loss, test_acc <span class="op">=</span> <span class="va">self</span>.model.evaluate(X_test, y_test, verbose<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&#39;Test set accuracy: </span><span class="sc">{</span>test_acc<span class="sc">:.4f}</span><span class="ss">&#39;</span>)</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> history</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> predict(<span class="va">self</span>, x):</span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.model.predict(x)</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_history(<span class="va">self</span>, history):</span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>        loss_values <span class="op">=</span> history.history[<span class="st">&#39;loss&#39;</span>]</span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>        val_loss_values <span class="op">=</span> history.history[<span class="st">&#39;val_loss&#39;</span>]</span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>        epochs <span class="op">=</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(loss_values) <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>        plt.plot(epochs, loss_values, <span class="st">&#39;r&#39;</span>, label<span class="op">=</span><span class="st">&#39;Training loss&#39;</span>)</span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>        plt.plot(epochs, val_loss_values, <span class="st">&#39;b&#39;</span>, label<span class="op">=</span><span class="st">&#39;Validation loss&#39;</span>)</span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">&#39;Training and validation loss&#39;</span>)</span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>        plt.xlabel(<span class="st">&#39;Epochs&#39;</span>)</span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>        plt.ylabel(<span class="st">&#39;Loss&#39;</span>)</span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>        plt.legend()</span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_confusion_matrix(<span class="va">self</span>, x, y_true, class_labels):</span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>        <span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix</span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>        y_pred <span class="op">=</span> <span class="va">self</span>.predict(x).argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>        cm <span class="op">=</span> confusion_matrix(y_true, y_pred)</span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>        sns.heatmap(cm, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">&#39;d&#39;</span>, cmap<span class="op">=</span><span class="st">&#39;Blues&#39;</span>, xticklabels<span class="op">=</span>class_labels, yticklabels<span class="op">=</span>class_labels)</span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>        plt.xlabel(<span class="st">&quot;Predicted&quot;</span>)</span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>        plt.ylabel(<span class="st">&quot;True&quot;</span>)</span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">&quot;Confusion Matrix&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="tuning" class="level2">
 <h2 class="anchored" data-anchor-id="tuning">Tuning</h2>
-<div id="cell-20" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>label_encoder <span class="op">=</span> LabelEncoder()</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>y_train_encoded <span class="op">=</span> label_encoder.fit_transform(y_train)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>y_val_encoded <span class="op">=</span> label_encoder.transform(y_val)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>y_test_encoded <span class="op">=</span> label_encoder.transform(y_test)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>num_classes <span class="op">=</span> <span class="bu">len</span>(label_encoder.classes_)</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="cell-21" class="cell" data-outputid="c2bbc1f7-70f7-4d3e-9d81-ee3c1ca40235" data-execution_count="12">
+<div id="cell-21" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>optimizers <span class="op">=</span> [<span class="st">&#39;rmsprop&#39;</span>, <span class="st">&#39;sgd&#39;</span>, <span class="st">&#39;adam&#39;</span>]</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>activation_func <span class="op">=</span> [<span class="st">&#39;relu&#39;</span>, <span class="st">&#39;tanh&#39;</span>, <span class="st">&#39;leaky_relu&#39;</span>]</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>regularizations <span class="op">=</span> [<span class="va">None</span>, <span class="st">&#39;l1&#39;</span>, <span class="st">&#39;l2&#39;</span>]</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>dropout_rates <span class="op">=</span> [<span class="dv">0</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span>]</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>reg_strengths <span class="op">=</span> [<span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>] </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>label_encoder <span class="op">=</span> LabelEncoder()</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>y_train_encoded <span class="op">=</span> label_encoder.fit_transform(y_train)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>y_val_encoded <span class="op">=</span> label_encoder.transform(y_val)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>y_test_encoded <span class="op">=</span> label_encoder.transform(y_test)</span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> []</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> optimizer <span class="kw">in</span> optimizers:</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> activation <span class="kw">in</span> activation_func:</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> regularization <span class="kw">in</span> regularizations:</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> dropout_rate <span class="kw">in</span> dropout_rates:</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>               </span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>                reg_strength_vals <span class="op">=</span> [<span class="va">None</span>] <span class="cf">if</span> regularization <span class="kw">is</span> <span class="va">None</span> <span class="cf">else</span> reg_strengths</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> reg_strength <span class="kw">in</span> reg_strength_vals:</span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">print</span>(<span class="ss">f&quot;Training: optimizer=</span><span class="sc">{</span>optimizer<span class="sc">}</span><span class="ss">, activation=</span><span class="sc">{</span>activation<span class="sc">}</span><span class="ss">, &quot;</span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>                          <span class="ss">f&quot;regularization=</span><span class="sc">{</span>regularization<span class="sc">}</span><span class="ss">, reg_strength=</span><span class="sc">{</span>reg_strength<span class="sc">}</span><span class="ss">, &quot;</span></span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>                          <span class="ss">f&quot;dropout_rate=</span><span class="sc">{</span>dropout_rate<span class="sc">}</span><span class="ss">&quot;</span>)</span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>                    model <span class="op">=</span> feed_forward_model(optimizer<span class="op">=</span>optimizer,</span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>                                               activation_func<span class="op">=</span>activation,</span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>                                               num_classes<span class="op">=</span>num_classes,</span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>                                               regularization<span class="op">=</span>(regularization, reg_strength),</span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>                                               dropout_rate<span class="op">=</span>dropout_rate)</span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>                   </span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>                    history <span class="op">=</span> model.fit(X_train, y_train_encoded,</span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>                                        X_val, y_val_encoded)</span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>                   </span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>                    y_val_pred_probs <span class="op">=</span> model.model.predict(X_val)</span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>                    y_val_pred <span class="op">=</span> y_val_pred_probs.argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>                    precision, recall, f1, _ <span class="op">=</span> precision_recall_fscore_support(</span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>                        y_val_encoded, y_val_pred, average<span class="op">=</span><span class="st">&#39;macro&#39;</span>, zero_division<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>                    val_acc <span class="op">=</span> history.history[<span class="st">&#39;val_accuracy&#39;</span>][<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>                    results.append({</span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;optimizer&#39;</span>: optimizer,</span>
-<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;activation&#39;</span>: activation,</span>
-<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;regularization&#39;</span>: regularization,</span>
-<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;reg_strength&#39;</span>: reg_strength,</span>
-<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;dropout_rate&#39;</span>: dropout_rate,</span>
-<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;val_accuracy&#39;</span>: val_acc,</span>
-<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;val_precision&#39;</span>: precision,</span>
-<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;val_recall&#39;</span>: recall,</span>
-<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;val_f1&#39;</span>: f1</span>
-<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>                    })</span>
-<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>num_classes <span class="op">=</span> <span class="bu">len</span>(label_encoder.classes_)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(num_classes)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>12</code></pre>
+</div>
+</div>
+<div id="cell-22" class="cell" data-outputid="c2bbc1f7-70f7-4d3e-9d81-ee3c1ca40235" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>optimizers <span class="op">=</span> [<span class="st">&#39;rmsprop&#39;</span>, <span class="st">&#39;sgd&#39;</span>, <span class="st">&#39;adam&#39;</span>]</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>activation_func <span class="op">=</span> [<span class="st">&#39;relu&#39;</span>, <span class="st">&#39;tanh&#39;</span>, <span class="st">&#39;leaky_relu&#39;</span>]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>regularizations <span class="op">=</span> [<span class="va">None</span>, <span class="st">&#39;l1&#39;</span>, <span class="st">&#39;l2&#39;</span>]</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>dropout_rates <span class="op">=</span> [<span class="dv">0</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span>]</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>reg_strengths <span class="op">=</span> [<span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>] </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> []</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> optimizer <span class="kw">in</span> optimizers:</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> activation <span class="kw">in</span> activation_func:</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> regularization <span class="kw">in</span> regularizations:</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> dropout_rate <span class="kw">in</span> dropout_rates:</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>               </span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>                reg_strength_vals <span class="op">=</span> [<span class="va">None</span>] <span class="cf">if</span> regularization <span class="kw">is</span> <span class="va">None</span> <span class="cf">else</span> reg_strengths</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> reg_strength <span class="kw">in</span> reg_strength_vals:</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">print</span>(<span class="ss">f&quot;Training: optimizer=</span><span class="sc">{</span>optimizer<span class="sc">}</span><span class="ss">, activation=</span><span class="sc">{</span>activation<span class="sc">}</span><span class="ss">, &quot;</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>                          <span class="ss">f&quot;regularization=</span><span class="sc">{</span>regularization<span class="sc">}</span><span class="ss">, reg_strength=</span><span class="sc">{</span>reg_strength<span class="sc">}</span><span class="ss">, &quot;</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>                          <span class="ss">f&quot;dropout_rate=</span><span class="sc">{</span>dropout_rate<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>                    model <span class="op">=</span> feed_forward_model(optimizer<span class="op">=</span>optimizer,</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>                                               activation_func<span class="op">=</span>activation,</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>                                               num_classes<span class="op">=</span>num_classes,</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>                                               regularization<span class="op">=</span>(regularization, reg_strength),</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>                                               dropout_rate<span class="op">=</span>dropout_rate)</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>                   </span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>                    history <span class="op">=</span> model.fit(X_train, y_train_encoded,</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>                                        X_val, y_val_encoded)</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>                   </span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>                    y_val_pred_probs <span class="op">=</span> model.model.predict(X_val)</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>                    y_val_pred <span class="op">=</span> y_val_pred_probs.argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>                    precision, recall, f1, _ <span class="op">=</span> precision_recall_fscore_support(</span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>                        y_val_encoded, y_val_pred, average<span class="op">=</span><span class="st">&#39;macro&#39;</span>, zero_division<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>                    val_acc <span class="op">=</span> history.history[<span class="st">&#39;val_accuracy&#39;</span>][<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>                    results.append({</span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;optimizer&#39;</span>: optimizer,</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;activation&#39;</span>: activation,</span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;regularization&#39;</span>: regularization,</span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;reg_strength&#39;</span>: reg_strength,</span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;dropout_rate&#39;</span>: dropout_rate,</span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;val_accuracy&#39;</span>: val_acc,</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;val_precision&#39;</span>: precision,</span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;val_recall&#39;</span>: recall,</span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a>                        <span class="st">&#39;val_f1&#39;</span>: f1</span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>                    })</span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Training: optimizer=rmsprop, activation=relu, regularization=None, reg_strength=None, dropout_rate=0</code></pre>
 </div>
@@ -6580,12 +6641,12 @@ Incompatible shapes: [50,64] vs. [0]
 </div>
 </div>
 <p>Results of grid search hyperparameter tuning best model according to validation accuracy: sgd , tanh , l1 = 0.001, dropout rate = 0.0</p>
-<div id="cell-23" class="cell" data-outputid="959e9d9e-35ef-4cb4-b93f-e568e497f4a5" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb327"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb327-1"><a href="#cb327-1" aria-hidden="true" tabindex="-1"></a>results_df <span class="op">=</span> pd.DataFrame(results)</span>
-<span id="cb327-2"><a href="#cb327-2" aria-hidden="true" tabindex="-1"></a>results_df_sorted <span class="op">=</span> results_df.sort_values(by<span class="op">=</span><span class="st">&#39;val_accuracy&#39;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb327-3"><a href="#cb327-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb327-4"><a href="#cb327-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb327-5"><a href="#cb327-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(results_df_sorted)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-24" class="cell" data-outputid="959e9d9e-35ef-4cb4-b93f-e568e497f4a5" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb329"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb329-1"><a href="#cb329-1" aria-hidden="true" tabindex="-1"></a>results_df <span class="op">=</span> pd.DataFrame(results)</span>
+<span id="cb329-2"><a href="#cb329-2" aria-hidden="true" tabindex="-1"></a>results_df_sorted <span class="op">=</span> results_df.sort_values(by<span class="op">=</span><span class="st">&#39;val_accuracy&#39;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb329-3"><a href="#cb329-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb329-4"><a href="#cb329-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb329-5"><a href="#cb329-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(results_df_sorted)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    optimizer  activation regularization  reg_strength  dropout_rate  \
 87        sgd        tanh             l1         0.001           0.0   
@@ -6620,44 +6681,44 @@ Incompatible shapes: [50,64] vs. [0]
 <section id="final-results" class="level2">
 <h2 class="anchored" data-anchor-id="final-results">Final results</h2>
 <p>Optimal model</p>
-<div id="cell-26" class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb329"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb329-1"><a href="#cb329-1" aria-hidden="true" tabindex="-1"></a>best_config <span class="op">=</span> results_df.sort_values(by<span class="op">=</span><span class="st">&#39;val_accuracy&#39;</span>, ascending<span class="op">=</span><span class="va">False</span>).iloc[<span class="dv">0</span>]</span>
-<span id="cb329-2"><a href="#cb329-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb329-3"><a href="#cb329-3" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> best_config[<span class="st">&#39;optimizer&#39;</span>]</span>
-<span id="cb329-4"><a href="#cb329-4" aria-hidden="true" tabindex="-1"></a>activation <span class="op">=</span> best_config[<span class="st">&#39;activation&#39;</span>]</span>
-<span id="cb329-5"><a href="#cb329-5" aria-hidden="true" tabindex="-1"></a>regularization <span class="op">=</span> best_config[<span class="st">&#39;regularization&#39;</span>]</span>
-<span id="cb329-6"><a href="#cb329-6" aria-hidden="true" tabindex="-1"></a>reg_strength <span class="op">=</span> best_config[<span class="st">&#39;reg_strength&#39;</span>]</span>
-<span id="cb329-7"><a href="#cb329-7" aria-hidden="true" tabindex="-1"></a>dropout_rate <span class="op">=</span> best_config[<span class="st">&#39;dropout_rate&#39;</span>]</span>
-<span id="cb329-8"><a href="#cb329-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb329-9"><a href="#cb329-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Using best model configuration:&quot;</span>)</span>
-<span id="cb329-10"><a href="#cb329-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Activation: </span><span class="sc">{</span>activation<span class="sc">}</span><span class="ss">, Optimizer: </span><span class="sc">{</span>optimizer<span class="sc">}</span><span class="ss">, Regularization: </span><span class="sc">{</span>regularization<span class="sc">}</span><span class="ss">, &quot;</span></span>
-<span id="cb329-11"><a href="#cb329-11" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f&quot;Strength: </span><span class="sc">{</span>reg_strength<span class="sc">}</span><span class="ss">, Dropout: </span><span class="sc">{</span>dropout_rate<span class="sc">}</span><span class="ss">&quot;</span>)</span>
-<span id="cb329-12"><a href="#cb329-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb329-13"><a href="#cb329-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb329-14"><a href="#cb329-14" aria-hidden="true" tabindex="-1"></a>best_model <span class="op">=</span> feed_forward_model(optimizer<span class="op">=</span>optimizer,</span>
-<span id="cb329-15"><a href="#cb329-15" aria-hidden="true" tabindex="-1"></a>                                activation_func<span class="op">=</span>activation,</span>
-<span id="cb329-16"><a href="#cb329-16" aria-hidden="true" tabindex="-1"></a>                                num_classes<span class="op">=</span>num_classes,</span>
-<span id="cb329-17"><a href="#cb329-17" aria-hidden="true" tabindex="-1"></a>                                regularization<span class="op">=</span>(regularization, reg_strength),</span>
-<span id="cb329-18"><a href="#cb329-18" aria-hidden="true" tabindex="-1"></a>                                dropout_rate<span class="op">=</span>dropout_rate)</span>
-<span id="cb329-19"><a href="#cb329-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb329-20"><a href="#cb329-20" aria-hidden="true" tabindex="-1"></a>history <span class="op">=</span> best_model.fit(X_train, y_train_encoded,</span>
-<span id="cb329-21"><a href="#cb329-21" aria-hidden="true" tabindex="-1"></a>                         X_val, y_val_encoded,</span>
-<span id="cb329-22"><a href="#cb329-22" aria-hidden="true" tabindex="-1"></a>                         X_test<span class="op">=</span>X_test, y_test<span class="op">=</span>y_test_encoded)</span>
-<span id="cb329-23"><a href="#cb329-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb329-24"><a href="#cb329-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb329-25"><a href="#cb329-25" aria-hidden="true" tabindex="-1"></a>y_pred_probs <span class="op">=</span> best_model.model.predict(X_test)</span>
-<span id="cb329-26"><a href="#cb329-26" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> y_pred_probs.argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb329-27"><a href="#cb329-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb329-28"><a href="#cb329-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Classification Report on Test Set:&quot;</span>)</span>
-<span id="cb329-29"><a href="#cb329-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test_encoded, y_pred, target_names<span class="op">=</span>label_encoder.classes_.astype(<span class="bu">str</span>)))</span>
-<span id="cb329-30"><a href="#cb329-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb329-31"><a href="#cb329-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb329-32"><a href="#cb329-32" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test_encoded, y_pred)</span>
-<span id="cb329-33"><a href="#cb329-33" aria-hidden="true" tabindex="-1"></a>sns.heatmap(cm, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">&#39;d&#39;</span>, cmap<span class="op">=</span><span class="st">&#39;Blues&#39;</span>)</span>
-<span id="cb329-34"><a href="#cb329-34" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&quot;Predicted&quot;</span>)</span>
-<span id="cb329-35"><a href="#cb329-35" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&quot;Actual&quot;</span>)</span>
-<span id="cb329-36"><a href="#cb329-36" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Confusion Matrix&quot;</span>)</span>
-<span id="cb329-37"><a href="#cb329-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-27" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb331"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb331-1"><a href="#cb331-1" aria-hidden="true" tabindex="-1"></a>best_config <span class="op">=</span> results_df.sort_values(by<span class="op">=</span><span class="st">&#39;val_accuracy&#39;</span>, ascending<span class="op">=</span><span class="va">False</span>).iloc[<span class="dv">0</span>]</span>
+<span id="cb331-2"><a href="#cb331-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb331-3"><a href="#cb331-3" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> best_config[<span class="st">&#39;optimizer&#39;</span>]</span>
+<span id="cb331-4"><a href="#cb331-4" aria-hidden="true" tabindex="-1"></a>activation <span class="op">=</span> best_config[<span class="st">&#39;activation&#39;</span>]</span>
+<span id="cb331-5"><a href="#cb331-5" aria-hidden="true" tabindex="-1"></a>regularization <span class="op">=</span> best_config[<span class="st">&#39;regularization&#39;</span>]</span>
+<span id="cb331-6"><a href="#cb331-6" aria-hidden="true" tabindex="-1"></a>reg_strength <span class="op">=</span> best_config[<span class="st">&#39;reg_strength&#39;</span>]</span>
+<span id="cb331-7"><a href="#cb331-7" aria-hidden="true" tabindex="-1"></a>dropout_rate <span class="op">=</span> best_config[<span class="st">&#39;dropout_rate&#39;</span>]</span>
+<span id="cb331-8"><a href="#cb331-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb331-9"><a href="#cb331-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Using best model configuration:&quot;</span>)</span>
+<span id="cb331-10"><a href="#cb331-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Activation: </span><span class="sc">{</span>activation<span class="sc">}</span><span class="ss">, Optimizer: </span><span class="sc">{</span>optimizer<span class="sc">}</span><span class="ss">, Regularization: </span><span class="sc">{</span>regularization<span class="sc">}</span><span class="ss">, &quot;</span></span>
+<span id="cb331-11"><a href="#cb331-11" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f&quot;Strength: </span><span class="sc">{</span>reg_strength<span class="sc">}</span><span class="ss">, Dropout: </span><span class="sc">{</span>dropout_rate<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb331-12"><a href="#cb331-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb331-13"><a href="#cb331-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb331-14"><a href="#cb331-14" aria-hidden="true" tabindex="-1"></a>best_model <span class="op">=</span> feed_forward_model(optimizer<span class="op">=</span>optimizer,</span>
+<span id="cb331-15"><a href="#cb331-15" aria-hidden="true" tabindex="-1"></a>                                activation_func<span class="op">=</span>activation,</span>
+<span id="cb331-16"><a href="#cb331-16" aria-hidden="true" tabindex="-1"></a>                                num_classes<span class="op">=</span>num_classes,</span>
+<span id="cb331-17"><a href="#cb331-17" aria-hidden="true" tabindex="-1"></a>                                regularization<span class="op">=</span>(regularization, reg_strength),</span>
+<span id="cb331-18"><a href="#cb331-18" aria-hidden="true" tabindex="-1"></a>                                dropout_rate<span class="op">=</span>dropout_rate)</span>
+<span id="cb331-19"><a href="#cb331-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb331-20"><a href="#cb331-20" aria-hidden="true" tabindex="-1"></a>history <span class="op">=</span> best_model.fit(X_train, y_train_encoded,</span>
+<span id="cb331-21"><a href="#cb331-21" aria-hidden="true" tabindex="-1"></a>                         X_val, y_val_encoded,</span>
+<span id="cb331-22"><a href="#cb331-22" aria-hidden="true" tabindex="-1"></a>                         X_test<span class="op">=</span>X_test, y_test<span class="op">=</span>y_test_encoded)</span>
+<span id="cb331-23"><a href="#cb331-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb331-24"><a href="#cb331-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb331-25"><a href="#cb331-25" aria-hidden="true" tabindex="-1"></a>y_pred_probs <span class="op">=</span> best_model.model.predict(X_test)</span>
+<span id="cb331-26"><a href="#cb331-26" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> y_pred_probs.argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb331-27"><a href="#cb331-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb331-28"><a href="#cb331-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Classification Report on Test Set:&quot;</span>)</span>
+<span id="cb331-29"><a href="#cb331-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test_encoded, y_pred, target_names<span class="op">=</span>label_encoder.classes_.astype(<span class="bu">str</span>)))</span>
+<span id="cb331-30"><a href="#cb331-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb331-31"><a href="#cb331-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb331-32"><a href="#cb331-32" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test_encoded, y_pred)</span>
+<span id="cb331-33"><a href="#cb331-33" aria-hidden="true" tabindex="-1"></a>sns.heatmap(cm, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">&#39;d&#39;</span>, cmap<span class="op">=</span><span class="st">&#39;Blues&#39;</span>)</span>
+<span id="cb331-34"><a href="#cb331-34" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&quot;Predicted&quot;</span>)</span>
+<span id="cb331-35"><a href="#cb331-35" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&quot;Actual&quot;</span>)</span>
+<span id="cb331-36"><a href="#cb331-36" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Confusion Matrix&quot;</span>)</span>
+<span id="cb331-37"><a href="#cb331-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Using best model configuration:
 Activation: tanh, Optimizer: sgd, Regularization: l1, Strength: 0.001, Dropout: 0.0</code></pre>

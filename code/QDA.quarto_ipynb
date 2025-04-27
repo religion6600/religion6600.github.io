@@ -21,7 +21,7 @@
         "\n",
         "#### Reading in the Data\n"
       ],
-      "id": "18668bb6"
+      "id": "ec206c09"
     },
     {
       "cell_type": "code",
@@ -36,7 +36,7 @@
         "\n",
         "# getting the x and y variables"
       ],
-      "id": "e33d9410",
+      "id": "f3869293",
       "execution_count": null,
       "outputs": []
     },
@@ -46,7 +46,7 @@
       "source": [
         "#### Preprocessing\n"
       ],
-      "id": "4f91b1e5"
+      "id": "ee02e16c"
     },
     {
       "cell_type": "code",
@@ -72,7 +72,7 @@
         "print(X_test.shape)\n",
         "print(y_test.shape)"
       ],
-      "id": "0a04e06d",
+      "id": "46beec2a",
       "execution_count": null,
       "outputs": []
     },
@@ -82,7 +82,7 @@
       "source": [
         "### Performing QDA"
       ],
-      "id": "2340d5f6"
+      "id": "3281b4ab"
     }
   ],
   "metadata": {
