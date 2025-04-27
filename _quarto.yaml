@@ -1,0 +1,15 @@
+project:
+  type: website
+  output-dir: docs
+  resources:
+    - data
+    - images
+
+website:
+  title: "6600 Final Project"
+  favicon: "images/gu-logo.png"
+  navbar: 
+    search: true
+    left: 
+      - href: index.qmd
+        text: Home
